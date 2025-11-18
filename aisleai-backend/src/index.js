@@ -45,7 +45,7 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(express.json());
 
-// CORS (allow all origins for now)
+
 app.use(cors({
   origin: true,
   credentials: true,
@@ -53,16 +53,15 @@ app.use(cors({
   allowedHeaders: ['Content-Type','Authorization']
 }));
 
-// Preflight
+
 app.options('*', cors());
 
-// Database
+
 dbConfig();
 
-// Routes
 app.use('/api/auth', authRoutes);
 
-// Render requires 0.0.0.0
+
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server is running on port ${PORT}`);
 });
