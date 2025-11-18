@@ -1,0 +1,47 @@
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5002";
+
+export default function SignupPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [msg, setMsg] = useState("");
+  const navigate = useNavigate();
+
+  async function submit(e) {
+    e.preventDefault();
+    setMsg("Loading...");
+    try {
+      const res = await fetch(`${API_URL}/api/auth/signup`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Signup failed");
+      setMsg("Account created");
+      navigate("/login");
+    } catch (err) {
+      setMsg(err.message);
+    }
+  }
+
+  return (
+    <div className="page form-page">
+      <h2>Sign up</h2>
+      <form onSubmit={submit} className="form">
+        <label>
+          Email
+          <input value={email} onChange={(e) => setEmail(e.target.value)} required />
+        </label>
+        <label>
+          Password
+          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+        </label>
+        <button type="submit">Create account</button>
+      </form>
+      <p className="msg">{msg}</p>
+    </div>
+  );
+}
