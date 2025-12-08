@@ -30,7 +30,8 @@ app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', message: 'AisleAI Backend is running!' });
 });
 
-const PORT = 5001; // Force 5001 to avoid macOS conflict
+// const PORT = 5001; // Force 5001 to avoid macOS conflict
+const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
 });
