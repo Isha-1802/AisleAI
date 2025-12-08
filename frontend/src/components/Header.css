@@ -1,0 +1,428 @@
+/* LUXURY HEADER - CHANEL/DIOR INSPIRED */
+.header-luxury {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: #ffffff;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.header-container-luxury {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 0 48px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Logo */
+.logo-luxury {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    padding: 8px 12px;
+}
+
+.logo-luxury:hover {
+    opacity: 0.85;
+}
+
+.logo-monogram-container {
+    position: relative;
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo-svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 1px 3px rgba(93, 64, 55, 0.15));
+    transition: all 0.3s ease;
+}
+
+.logo-luxury:hover .logo-svg {
+    filter: drop-shadow(0 2px 6px rgba(93, 64, 55, 0.25));
+}
+
+.logo-text-luxury {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.logo-brand {
+    font-family: 'Playfair Display', 'Cormorant Garamond', serif;
+    font-size: 26px;
+    font-weight: 500;
+    letter-spacing: 5px;
+    color: #5D4037;
+    line-height: 1;
+    transition: all 0.3s ease;
+}
+
+.logo-luxury:hover .logo-brand {
+    letter-spacing: 6px;
+}
+
+.logo-tagline {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 8px;
+    font-weight: 300;
+    letter-spacing: 3px;
+    color: #8D6E63;
+    text-transform: uppercase;
+    line-height: 1;
+    opacity: 0.7;
+}
+
+/* LUXURY NAVIGATION */
+.nav-luxury {
+    display: flex;
+    align-items: center;
+    gap: 56px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.nav-item-luxury {
+    font-family: 'Montserrat', sans-serif;
+    text-decoration: none;
+    color: #000;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    padding: 8px 0;
+    position: relative;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.nav-item-luxury::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: #000;
+    transition: width 0.4s ease;
+}
+
+.nav-item-luxury:hover::after {
+    width: 100%;
+}
+
+/* MEGA MENU LUXURY */
+.nav-dropdown-luxury {
+    position: relative;
+}
+
+.mega-menu-luxury {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #fff;
+    box-shadow: 0 10px 60px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    min-width: 1100px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    transition-delay: 0s, 0s;
+    border-top: 1px solid #2c2c2c;
+    z-index: 9999;
+}
+
+.nav-dropdown-luxury:hover .mega-menu-luxury {
+    opacity: 1;
+    visibility: visible;
+    transition-delay: 0.1s, 0.1s;
+}
+
+.mega-menu-luxury:hover {
+    opacity: 1;
+    visibility: visible;
+    transition-delay: 0s, 0s;
+}
+
+/* Prevent menu from closing when moving cursor from nav to menu */
+.nav-dropdown-luxury::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    height: 20px;
+}
+
+@keyframes luxuryFadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+.mega-menu-inner {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    padding: 48px 40px;
+    gap: 40px;
+}
+
+.mega-col {
+    min-width: 0;
+}
+
+.mega-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: #000;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+.mega-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.mega-list li {
+    margin-bottom: 12px;
+}
+
+.mega-link {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    font-weight: 300;
+    color: #666;
+    text-decoration: none;
+    transition: color 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.mega-link:hover {
+    color: #000;
+}
+
+.mega-tag {
+    font-size: 8px;
+    padding: 3px 8px;
+    background: #000;
+    color: #fff;
+    border-radius: 2px;
+    font-weight: 500;
+    letter-spacing: 1px;
+}
+
+.mega-col-highlight {
+    background: #fafafa;
+    padding: 24px;
+    margin: -24px;
+    margin-left: 0;
+}
+
+/* LUXURY ICONS */
+.header-actions-luxury {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.icon-luxury {
+    background: none;
+    border: none;
+    color: #000;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.3s ease;
+    padding: 8px;
+}
+
+.icon-luxury:hover {
+    opacity: 0.6;
+}
+
+.icon-luxury svg {
+    width: 20px;
+    height: 20px;
+    stroke-width: 1;
+}
+
+/* USER MENU LUXURY */
+.user-menu-luxury {
+    position: relative;
+}
+
+.user-dropdown-luxury {
+    position: absolute;
+    top: calc(100% + 16px);
+    right: 0;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    padding: 24px;
+    min-width: 240px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    animation: luxuryFadeIn 0.3s ease;
+}
+
+.user-info-luxury {
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 16px;
+}
+
+.user-name-luxury {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 16px;
+    margin-bottom: 4px;
+    color: #000;
+}
+
+.user-email-luxury {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    color: #999;
+    font-weight: 300;
+}
+
+.logout-btn-luxury {
+    width: 100%;
+    padding: 12px;
+    background: #000;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+}
+
+.logout-btn-luxury:hover {
+    background: #333;
+}
+
+/* RESPONSIVE & MOBILE MENU */
+@media (max-width: 1024px) {
+    .nav-luxury {
+        gap: 32px;
+    }
+}
+
+@media (max-width: 768px) {
+
+    .desktop-nav,
+    .desktop-actions {
+        display: none !important;
+    }
+
+    .header-container-luxury {
+        justify-content: center;
+        height: 60px;
+        padding: 0 16px;
+    }
+
+    .logo-luxury {
+        cursor: pointer;
+    }
+
+    .logo-brand {
+        font-size: 20px;
+        letter-spacing: 4px;
+    }
+
+    .logo-svg {
+        width: 36px;
+        height: 36px;
+    }
+
+    .logo-tagline {
+        font-size: 7px;
+    }
+}
+
+/* MOBILE MENU OVERLAY */
+.mobile-menu-overlay {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 60px);
+    background: white;
+    z-index: 999;
+    transform: translateX(-100%);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    padding: 40px;
+    overflow-y: auto;
+}
+
+.mobile-menu-overlay.open {
+    transform: translateX(0);
+}
+
+.mobile-menu-content {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    align-items: center;
+    width: 100%;
+}
+
+.mobile-menu-content a {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    color: #1A1A1A;
+    text-decoration: none;
+    letter-spacing: 1px;
+    transition: color 0.3s ease;
+}
+
+.mobile-menu-content a:hover {
+    color: #D4AF37;
+}
+
+.mobile-divider {
+    width: 60px;
+    height: 1px;
+    background: #eee;
+    margin: 10px 0;
+}
+
+.mobile-logout {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.9rem;
+    color: #999;
+    background: none;
+    border: 1px solid #eee;
+    padding: 12px 24px;
+    border-radius: 50px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    margin-top: 20px;
+}

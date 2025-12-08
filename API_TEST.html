@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>API Test</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            cursor: pointer;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background: #45a049;
+        }
+
+        .output {
+            background: #2a2a2a;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        input {
+            padding: 10px;
+            width: 400px;
+            margin: 10px 0;
+            background: #2a2a2a;
+            border: 1px solid #444;
+            color: white;
+            border-radius: 4px;
+        }
+
+        .error {
+            color: #ff4444;
+        }
+
+        .success {
+            color: #4CAF50;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🔍 AisleAI API Tester</h1>
+
+    <h2>Step 1: Get Your Token</h2>
+    <p>1. Go to <a href="http://localhost:5173/login" target="_blank">http://localhost:5173/login</a></p>
+    <p>2. Log in</p>
+    <p>3. Open browser console (F12)</p>
+    <p>4. Type: <code>localStorage.getItem('token')</code></p>
+    <p>5. Copy the token and paste it below:</p>
+
+    <input type="text" id="token" placeholder="Paste your token here" />
+
+    <h2>Step 2: Test Chat API</h2>
+    <button onclick="testChat()">Test Chat Message</button>
+    <button onclick="testQuiz()">Test Quiz</button>
+    <button onclick="testHealth()">Test Backend Health</button>
+
+    <h2>Results:</h2>
+    <div id="output" class="output">Waiting for test...</div>
+
+    <script>
+        const API_URL = 'http://localhost:5001/api';
+
+        function log(message, type = 'info') {
+            const output = document.getElementById('output');
+            const timestamp = new Date().toLocaleTimeString();
+            const className = type === 'error' ? 'error' : type === 'success' ? 'success' : '';
+            output.innerHTML += `<div class="${className}">[${timestamp}] ${message}</div>`;
+            output.scrollTop = output.scrollHeight;
+        }
+
+        function clearLog() {
+            document.getElementById('output').innerHTML = '';
+        }
+
+        async function testHealth() {
+            clearLog();
+            log('Testing backend health...');
+
+            try {
+                const response = await fetch(`${API_URL}/health`);
+                const data = await response.json();
+                log(`✅ Backend is running: ${data.message}`, 'success');
+            } catch (error) {
+                log(`❌ Backend error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testChat() {
+            clearLog();
+            const token = document.getElementById('token').value;
+
+            if (!token) {
+                log('❌ Please enter your token first!', 'error');
+                return;
+            }
+
+            log('Testing chat API...');
+            log(`Token: ${token.substring(0, 20)}...`);
+
+            try {
+                const response = await fetch(`${API_URL}/chat/message`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ message: 'Hello, can you help me?' })
+                });
+
+                log(`Response status: ${response.status}`);
+
+                if (response.status === 401) {
+                    log('❌ Authentication failed! Your token might be expired or invalid.', 'error');
+                    log('Please log in again and get a new token.', 'error');
+                    return;
+                }
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    log('✅ Chat API is working!', 'success');
+                    log(`AI Response: ${data.message}`, 'success');
+                } else {
+                    log(`❌ Error: ${data.error || 'Unknown error'}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ Request failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function testQuiz() {
+            clearLog();
+            const token = document.getElementById('token').value;
+
+            if (!token) {
+                log('❌ Please enter your token first!', 'error');
+                return;
+            }
+
+            log('Testing quiz API...');
+
+            try {
+                const response = await fetch(`${API_URL}/style-hub/quiz-result`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        quizType: 'body',
+                        answers: {
+                            height: 'Average',
+                            shoulders: 'Narrower',
+                            waist: 'Defined'
+                        }
+                    })
+                });
+
+                log(`Response status: ${response.status}`);
+
+                if (response.status === 401) {
+                    log('❌ Authentication failed! Your token might be expired or invalid.', 'error');
+                    return;
+                }
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    log('✅ Quiz API is working!', 'success');
+                    log(`AI Response: ${data.result.substring(0, 200)}...`, 'success');
+                } else {
+                    log(`❌ Error: ${data.error || 'Unknown error'}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ Request failed: ${error.message}`, 'error');
+            }
+        }
+    </script>
+</body>
+
+</html>

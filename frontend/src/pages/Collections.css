@@ -1,0 +1,432 @@
+.collections-page {
+    min-height: calc(100vh - 80px);
+    background: #ffffff;
+    padding: 24px 48px;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.breadcrumb a {
+    color: #666;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.breadcrumb a:hover {
+    color: #2c2c2c;
+}
+
+.breadcrumb-separator {
+    color: #999;
+}
+
+.breadcrumb-current {
+    color: #2c2c2c;
+    font-weight: 500;
+}
+
+/* Header Clean */
+.collections-header-clean {
+    margin-bottom: 32px;
+}
+
+.collections-header-clean h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    font-weight: 600;
+    color: #2c2c2c;
+    letter-spacing: 1px;
+}
+
+.item-count {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    font-weight: 300;
+    color: #999;
+    margin-left: 8px;
+}
+
+/* Container */
+.collections-container {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 48px;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+/* Filters Sidebar Clean */
+.filters-sidebar-clean {
+    background: #ffffff;
+    padding: 0;
+    height: fit-content;
+    position: sticky;
+    top: 100px;
+    border-right: 1px solid #e8e6e1;
+    padding-right: 32px;
+}
+
+.filters-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #2c2c2c;
+    margin-bottom: 32px;
+}
+
+.filter-section {
+    margin-bottom: 40px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid #e8e6e1;
+}
+
+.filter-section:last-child {
+    border-bottom: none;
+}
+
+.filter-heading {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #2c2c2c;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.search-icon-btn {
+    background: none;
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 4px;
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+}
+
+.search-icon-btn:hover {
+    opacity: 1;
+}
+
+.filter-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.filter-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    color: #333;
+    transition: color 0.3s ease;
+}
+
+.filter-checkbox:hover {
+    color: #2c2c2c;
+}
+
+.filter-checkbox input {
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+}
+
+.filter-checkbox span {
+    flex: 1;
+}
+
+.filter-count {
+    color: #999;
+    font-size: 12px;
+    margin-left: auto;
+}
+
+.more-btn {
+    background: none;
+    border: none;
+    color: #ff3f6c;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 8px 0;
+    text-align: left;
+    transition: opacity 0.3s ease;
+}
+
+.more-btn:hover {
+    opacity: 0.8;
+}
+
+/* Price Range */
+.price-range {
+    padding: 16px 0;
+}
+
+.price-slider {
+    width: 100%;
+    height: 4px;
+    appearance: none;
+    background: linear-gradient(to right, #ff3f6c 0%, #ff3f6c 50%, #e8e6e1 50%, #e8e6e1 100%);
+    outline: none;
+    border-radius: 2px;
+    margin-bottom: 12px;
+}
+
+.price-slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    background: #ff3f6c;
+    cursor: pointer;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.price-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background: #ff3f6c;
+    cursor: pointer;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.price-labels {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    color: #666;
+    font-weight: 500;
+}
+
+/* Sort Select */
+.sort-select {
+    width: 100%;
+    padding: 12px;
+    background: #ffffff;
+    border: 1px solid #d4c5b0;
+    color: #2c2c2c;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: border-color 0.3s ease;
+}
+
+.sort-select:hover,
+.sort-select:focus {
+    outline: none;
+    border-color: #2c2c2c;
+}
+
+/* Products Section */
+.products-section {
+    min-height: 400px;
+}
+
+.loading,
+.empty {
+    text-align: center;
+    padding: 80px 24px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    color: #6b6b6b;
+    font-weight: 300;
+    letter-spacing: 1px;
+}
+
+.empty button {
+    margin-top: 16px;
+    padding: 12px 24px;
+    background: #2c2c2c;
+    color: white;
+    border: none;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.empty button:hover {
+    background: #1a1a1a;
+}
+
+/* Products Grid */
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+}
+
+/* Product Card */
+.product-card {
+    background: #ffffff;
+    overflow: hidden;
+    transition: all 0.4s ease;
+    cursor: pointer;
+    border-radius: 2px;
+}
+
+.product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.product-image {
+    position: relative;
+    aspect-ratio: 3/4;
+    background-size: cover;
+    background-position: center;
+    background-color: #f5f3f0;
+    overflow: hidden;
+}
+
+.discount-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    padding: 4px 8px;
+    background: #ff3f6c;
+    color: #ffffff;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.trending-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 4px 8px;
+    background: rgba(255, 255, 255, 0.95);
+    color: #2c2c2c;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    border: 1px solid #e8e6e1;
+}
+
+/* Product Info */
+.product-info {
+    padding: 16px;
+}
+
+.product-brand {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #2c2c2c;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+}
+
+.product-name {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: #666;
+    margin-bottom: 10px;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.product-price {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.current-price {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: #2c2c2c;
+}
+
+.original-price {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    color: #999;
+    text-decoration: line-through;
+    font-weight: 400;
+}
+
+.product-rating {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    color: #666;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .collections-container {
+        grid-template-columns: 1fr;
+        gap: 32px;
+    }
+
+    .filters-sidebar-clean {
+        position: static;
+        border-right: none;
+        border-bottom: 1px solid #e8e6e1;
+        padding-right: 0;
+        padding-bottom: 32px;
+    }
+
+    .products-grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .collections-page {
+        padding: 16px 24px;
+    }
+
+    .products-grid {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 16px;
+    }
+
+    .product-info {
+        padding: 12px;
+    }
+
+    .collections-header-clean h1 {
+        font-size: 1.5rem;
+    }
+}

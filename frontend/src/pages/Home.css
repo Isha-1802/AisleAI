@@ -1,0 +1,850 @@
+.home-white {
+    background: #ffffff;
+    min-height: 100vh;
+}
+
+/* LUXURY IVORY HERO SECTION */
+/* LUXURY IVORY HERO SECTION */
+.hero-luxury-black {
+    position: relative;
+    min-height: 85vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #faf9f7;
+    color: #2c2c2c;
+    overflow: hidden;
+    border-bottom: 1px solid #e8e6e1;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
+}
+
+/* Removed Texture Overlay */
+.hero-luxury-black::before {
+    display: none;
+}
+
+.hero-content-luxury {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    max-width: 900px;
+    padding: 80px 48px;
+    animation: fadeIn 1.5s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.luxury-line {
+    display: block;
+    width: 60px;
+    height: 1px;
+    background: #b8a998;
+    margin: 0 auto 24px;
+}
+
+.hero-pretitle {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 4px;
+    color: #8b7355;
+    margin-bottom: 24px;
+    text-transform: uppercase;
+}
+
+.hero-title-luxury {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 5rem;
+    font-weight: 300;
+    line-height: 1.2;
+    margin-bottom: 32px;
+    letter-spacing: 8px;
+    /* Tighter for a modern editorial look */
+    text-transform: uppercase;
+    color: #2c2c2c;
+    position: relative;
+}
+
+/* The "Merging" Effect */
+.hero-emphasis {
+    display: inline;
+    font-size: inherit;
+    font-weight: 400;
+    font-style: italic;
+    letter-spacing: 12px;
+    color: #8b7355;
+    background: none;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: initial;
+    margin-top: 0;
+    /* Overlap slightly */
+    transform: none;
+    /* Stretch slightly for elegance */
+    opacity: 1;
+}
+
+.hero-description-luxury {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    line-height: 2;
+    color: #6b6b6b;
+    margin-bottom: 56px;
+    font-weight: 300;
+    letter-spacing: 2px;
+    text-transform: none;
+    opacity: 1;
+}
+
+.hero-ctas-luxury {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+}
+
+.btn-luxury-primary,
+.btn-luxury-secondary {
+    font-family: 'Montserrat', sans-serif;
+    padding: 18px 48px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-decoration: none;
+    transition: all 0.4s ease;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid;
+}
+
+/* Minimalist Black Button */
+.btn-luxury-primary {
+    background: #2c2c2c;
+    color: #ffffff;
+    border-color: #2c2c2c;
+}
+
+.btn-luxury-primary:hover {
+    background: transparent;
+    color: #2c2c2c;
+    transform: none;
+    letter-spacing: 4px;
+}
+
+/* Minimalist Outline Button */
+.btn-luxury-secondary {
+    background: transparent;
+    color: #2c2c2c;
+    border-color: #2c2c2c;
+}
+
+.btn-luxury-secondary:hover {
+    background: #2c2c2c;
+    color: #ffffff;
+    border-color: #2c2c2c;
+    transform: none;
+    letter-spacing: 4px;
+}
+
+/* WHITE SECTIONS - LUXURY MINIMAL */
+.section-white {
+    padding: 120px 0;
+    background: #ffffff;
+}
+
+.section-bg-light {
+    background: #fafafa;
+}
+
+.container-white {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 0 48px;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 80px;
+}
+
+.section-title-dark {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    letter-spacing: 4px;
+    color: #000000;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+}
+
+.section-subtitle-dark {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    color: #666666;
+    font-weight: 300;
+    letter-spacing: 2px;
+}
+
+/* COLLECTIONS GRID - ELEGANT SPACING, CENTERED */
+.collections-grid-white {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.collection-card-white {
+    text-decoration: none;
+    display: block;
+    overflow: hidden;
+    transition: all 0.4s ease;
+    border-radius: 2px;
+}
+
+.collection-card-white:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+}
+
+.collection-image-white {
+    position: relative;
+    aspect-ratio: 3/5;
+    overflow: hidden;
+    background: #f5f3f0;
+}
+
+.collection-image-white img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(30%);
+    transition: all 0.6s ease;
+}
+
+.collection-card-white:hover .collection-image-white img {
+    filter: grayscale(0%);
+    transform: scale(1.08);
+}
+
+.collection-overlay-white {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 24px 16px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+}
+
+.collection-overlay-white h3 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    color: #ffffff;
+    text-transform: uppercase;
+}
+
+/* OFFERS SECTION - HORIZONTAL SCROLL, CENTERED, SMALLER */
+.offers-scroll-container {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: #d4c5b0 #f5f3f0;
+    padding-bottom: 16px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.offers-scroll-container::-webkit-scrollbar {
+    height: 8px;
+}
+
+.offers-scroll-container::-webkit-scrollbar-track {
+    background: #f5f3f0;
+    border-radius: 4px;
+}
+
+.offers-scroll-container::-webkit-scrollbar-thumb {
+    background: #d4c5b0;
+    border-radius: 4px;
+}
+
+.offers-scroll-container::-webkit-scrollbar-thumb:hover {
+    background: #b8a998;
+}
+
+.offers-grid {
+    display: flex;
+    gap: 20px;
+    min-width: min-content;
+}
+
+.offer-card {
+    min-width: 380px;
+    height: 480px;
+    text-decoration: none;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    background-size: cover;
+    background-position: center;
+    border-radius: 2px;
+}
+
+.offer-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+}
+
+.offer-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0.1) 100%);
+    z-index: 1;
+}
+
+.offer-content {
+    position: relative;
+    z-index: 2;
+    padding: 40px 32px;
+    width: 100%;
+}
+
+.offer-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    margin-bottom: 12px;
+    color: #ffffff;
+    text-transform: uppercase;
+}
+
+.offer-subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.5rem;
+    font-weight: 400;
+    margin-bottom: 12px;
+    letter-spacing: 2px;
+    color: #ffffff;
+}
+
+.offer-description {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    opacity: 0.9;
+    margin-bottom: 20px;
+    font-weight: 300;
+    letter-spacing: 1px;
+    color: #ffffff;
+}
+
+.offer-cta {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #ffffff;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+    padding-bottom: 4px;
+    display: inline-block;
+    transition: border-color 0.3s ease;
+}
+
+.offer-card:hover .offer-cta {
+    border-color: #ffffff;
+}
+
+/* OCCASIONS GRID - SINGLE ROW, CENTERED, SMALLER */
+.occasions-grid-white {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 16px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.occasion-card-white {
+    text-decoration: none;
+    display: block;
+    overflow: hidden;
+    transition: all 0.4s ease;
+    border-radius: 12px;
+    /* Added rounded corners */
+    height: 100%;
+}
+
+.occasion-card-white:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+}
+
+.occasion-image-white {
+    position: relative;
+    aspect-ratio: 3/4;
+    /* Increased height (was 4/3) */
+    overflow: hidden;
+    background: #f5f3f0;
+    height: 100%;
+}
+
+.occasion-image-white img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(30%);
+    transition: all 0.6s ease;
+}
+
+.occasion-card-white:hover .occasion-image-white img {
+    filter: grayscale(0%);
+    transform: scale(1.05);
+}
+
+.occasion-overlay-white {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.1));
+    display: flex;
+    align-items: flex-end;
+    padding: 32px 24px;
+    /* Increased padding */
+}
+
+.occasion-overlay-white h3 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    color: #ffffff;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+/* MAISONS SECTION - LIGHT PARALLAX LUXURY */
+.section-white.section-bg-light {
+    position: relative;
+    padding: 100px 0;
+    margin-bottom: 80px;
+    /* Elegant Atelier Background */
+    background-image: url('https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2301&auto=format&fit=crop');
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+/* Heavy White Overlay for "Very Light" Effect */
+.section-white.section-bg-light::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.85);
+    /* 85% White Overlay */
+    backdrop-filter: blur(2px);
+    /* Subtle blur to soften details */
+    z-index: 1;
+}
+
+/* Ensure content sits above overlay */
+.section-white.section-bg-light .container-white {
+    position: relative;
+    z-index: 2;
+}
+
+/* BRANDS GRID - LUXURY MINIMAL */
+.brands-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.brand-item {
+    padding: 32px 24px;
+    text-align: center;
+    /* Semi-transparent white card */
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(5px);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    color: #2c2c2c;
+    text-decoration: none;
+    transition: all 0.4s ease;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 16px rgba(139, 115, 85, 0.05);
+}
+
+.brand-item:hover {
+    transform: translateY(-4px);
+    background: #ffffff;
+    box-shadow: 0 12px 32px rgba(139, 115, 85, 0.15);
+    border-color: #d4c5b0;
+    color: #000000;
+}
+
+/* STAY INFORMED - PARALLAX BROWN AESTHETIC */
+.section-parallax-brown {
+    position: relative;
+    background-image: url('https://images.unsplash.com/photo-1496747611176-843222e1e57c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') !important;
+    /* Ultimate Brown Aesthetic */
+    background-attachment: fixed;
+    /* Re-enabled Parallax */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    padding: 120px 0;
+    text-align: center;
+    color: white;
+    background-color: #8d6e63;
+}
+
+.section-parallax-brown::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    /* Darker overlay for better text visibility */
+    z-index: 1;
+}
+
+.section-parallax-brown .container-white {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.section-parallax-brown .section-title-dark {
+    color: #ffffff !important;
+    font-size: 3rem;
+    margin-bottom: 24px;
+}
+
+.section-parallax-brown .section-subtitle-dark {
+    color: rgba(255, 255, 255, 0.95) !important;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.newsletter-input-group {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    margin-top: 32px;
+}
+
+.newsletter-input {
+    padding: 16px 24px;
+    width: 400px;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    color: #2c2c2c;
+    outline: none;
+}
+
+.newsletter-btn {
+    padding: 16px 40px;
+    background: #2c2c2c;
+    color: white;
+    border: 1px solid #2c2c2c;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.newsletter-btn:hover {
+    background: transparent;
+    color: white;
+    border-color: white;
+}
+
+/* PHILOSOPHY SECTION - COMPACT */
+.philosophy-section {
+    padding: 60px 0;
+    text-align: center;
+    background: #fff;
+}
+
+.philosophy-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    max-width: 1000px;
+    margin: 40px auto 0;
+}
+
+.philosophy-card {
+    padding: 24px;
+    background: none;
+    /* Removed background, backdrop-filter, border */
+    backdrop-filter: none;
+    border: none;
+}
+
+.philosophy-icon {
+    font-size: 24px;
+    margin-bottom: 16px;
+    display: block;
+    color: #8b7355;
+}
+
+.philosophy-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+    color: #2c2c2c;
+    text-transform: uppercase;
+}
+
+.philosophy-text {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    line-height: 1.8;
+    color: #666;
+    font-weight: 400;
+}
+
+/* TESTIMONIALS - PARALLAX BACKGROUND - BROWN AESTHETIC */
+.section-white.testimonials-parallax {
+    position: relative;
+    background-image: url('https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=1920&q=80');
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    padding: 60px 0 !important;
+}
+
+.section-white.testimonials-parallax::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    z-index: 1;
+}
+
+.section-white.testimonials-parallax .container-white {
+    position: relative;
+    z-index: 2;
+}
+
+.section-white.testimonials-parallax .section-header {
+    margin-bottom: 48px;
+}
+
+.section-white.testimonials-parallax .section-title-dark {
+    color: #ffffff;
+    font-size: 2.5rem;
+}
+
+.section-white.testimonials-parallax .section-subtitle-dark {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* TESTIMONIALS - COMPACT & WIDER */
+.testimonials-container {
+    position: relative;
+    overflow: hidden;
+    padding: 24px 0;
+}
+
+.testimonials-scroll {
+    display: flex;
+    gap: 32px;
+    animation: luxuryScroll 60s linear infinite;
+}
+
+@keyframes luxuryScroll {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+.testimonials-scroll:hover {
+    animation-play-state: paused;
+}
+
+.testimonial-card {
+    min-width: 500px;
+    padding: 32px 48px;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.4s ease;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.testimonial-card:hover {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.4);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    transform: translateY(-4px);
+}
+
+.testimonial-stars {
+    color: #ffd700;
+    font-size: 13px;
+    margin-bottom: 16px;
+    letter-spacing: 4px;
+}
+
+.testimonial-review {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.95);
+    margin-bottom: 20px;
+    font-style: italic;
+    font-weight: 400;
+}
+
+.testimonial-author {
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    padding-top: 14px;
+}
+
+.author-name {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: #ffffff;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+}
+
+.author-role {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 9px;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 300;
+    letter-spacing: 1px;
+}
+
+/* RESPONSIVE - LUXURY */
+@media (max-width: 1200px) {
+    .collections-grid-white {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 20px;
+    }
+
+    .occasions-grid-white {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+    }
+}
+
+@media (max-width: 968px) {
+    .collections-grid-white {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+    }
+
+    .offer-card {
+        min-width: 350px;
+        height: 450px;
+    }
+
+    .occasions-grid-white {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-title-luxury {
+        font-size: 3rem;
+        letter-spacing: 4px;
+    }
+
+    .hero-emphasis {
+        letter-spacing: 6px;
+    }
+
+    .hero-ctas-luxury {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .btn-luxury-primary,
+    .btn-luxury-secondary {
+        width: 100%;
+        max-width: 300px;
+    }
+
+    .section-title-dark {
+        font-size: 2.5rem;
+    }
+
+    .collections-grid-white {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+    }
+
+    .offer-card {
+        min-width: 320px;
+        height: 420px;
+    }
+
+    .offers-grid {
+        gap: 16px;
+    }
+
+    .occasions-grid-white {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .newsletter-input-group {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .newsletter-input {
+        width: 100%;
+        max-width: 300px;
+    }
+
+    .philosophy-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+    }
+
+    .brands-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+
+    .testimonial-card {
+        min-width: 350px;
+        padding: 32px 40px;
+    }
+}
