@@ -8,7 +8,18 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors());
+// app.use(cors());
+app.use(
+    cors({
+      origin: [
+        "https://aisle-ai-4avu-dhtqcg0q8-isha-1802s-projects.vercel.app", // your frontend
+        "http://localhost:5173" // local dev
+      ],
+      methods: ["GET", "POST", "PUT", "DELETE"],
+      credentials: true,
+    })
+  );
+  
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
