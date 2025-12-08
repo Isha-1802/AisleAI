@@ -3,7 +3,7 @@ import { useSearchParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import './Collections.css';
 
-const API_URL = 'http://localhost:5001/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
 function Collections() {
     const [searchParams, setSearchParams] = useSearchParams();

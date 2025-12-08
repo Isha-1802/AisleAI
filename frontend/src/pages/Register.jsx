@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './Auth.css';
 
-const API_URL = 'http://localhost:5001/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
 function Register({ setUser }) {
     const [formData, setFormData] = useState({ name: '', email: '', password: '' });
