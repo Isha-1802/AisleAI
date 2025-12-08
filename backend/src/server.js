@@ -11,10 +11,11 @@ const app = express();
 // app.use(cors());
 app.use(
   cors({
-    origin: (origin, callback) => {
-      // Allow requests from any origin
-      callback(null, true);
-    },
+    origin: [
+      "https://aisle-ai-4avu.vercel.app", // production frontend
+      "https://aisle-ai-4avu-dhtqcg0q8-isha-1802s-projects.vercel.app", // vercel preview
+      "http://localhost:5173" // local dev
+    ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
@@ -45,8 +46,6 @@ app.get('/api/health', (req, res) => {
 app.get('/', (req, res) => {
   res.send('<h1>AisleAI Backend is Live! 🚀</h1><p>The server is running. Use endpoints like /api/products or /api/auth.</p>');
 });
-
-
 
 
 // const PORT = 5001; // Force 5001 to avoid macOS conflict

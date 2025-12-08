@@ -556,3 +556,49 @@
     color: #444;
     line-height: 1.6;
 }
+
+/* MOBILE RESPONSIVE (<480px) */
+@media (max-width: 480px) {
+    .style-hub-hero {
+        padding: 80px 20px 40px;
+    }
+
+    .style-hub-title {
+        font-size: 2.5rem;
+    }
+
+    .style-cards-grid {
+        grid-template-columns: 1fr;
+        /* Force 1 column */
+        gap: 24px;
+    }
+
+    .style-feature-card {
+        height: 350px;
+    }
+
+    .quiz-card {
+        padding: 24px;
+    }
+
+    .quiz-header h2 {
+        font-size: 2rem;
+    }
+
+    .options-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .results-title {
+        font-size: 2.5rem;
+    }
+
+    .ai-results-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .drop-cap {
+        font-size: 4rem;
+        margin-right: 12px;
+    }
+}
