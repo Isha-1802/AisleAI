@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import { useCart } from '../context/CartContext';
+import { useWishlist } from '../context/WishlistContext';
 import './Collections.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
@@ -47,7 +48,7 @@ function Collections() {
     // Load products whenever page or filters change
     useEffect(() => {
         loadProducts();
-    }, [page, selectedCategory, selectedBrand, sortBy, searchParams]);
+    }, [page, selectedCategory, selectedBrand, sortBy, searchParams, searchQuery]);
 
     const loadFilters = async () => {
         try {
@@ -290,6 +291,7 @@ function Collections() {
 
 function ProductCard({ product }) {
     const { addToCart } = useCart();
+    const { toggleWishlist, isInWishlist } = useWishlist();
     const [isHovered, setIsHovered] = useState(false);
 
     return (
@@ -314,10 +316,14 @@ function ProductCard({ product }) {
                         onClick={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
-                            alert('Added to Wishlist');
+                            toggleWishlist(product);
+                        }}
+                        style={{
+                            color: isInWishlist(product._id) ? '#ff3f6c' : '#666',
+                            opacity: isInWishlist(product._id) ? 1 : undefined
                         }}
                     >
-                        ♡
+                        {isInWishlist(product._id) ? '♥' : '♡'}
                     </button>
 
                     {/* Cart Button Overlay - Bottom Left (or Below as requested? user said "small button below for cart") */}

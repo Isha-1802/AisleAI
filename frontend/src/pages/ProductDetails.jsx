@@ -3,13 +3,16 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useCart } from '../context/CartContext';
 import './Collections.css'; // Reusing collections CSS for consistent styling
-
+import { useCart } from '../context/CartContext';
+import { useWishlist } from '../context/WishlistContext';
+import './Collections.css'; // Reusing collections CSS for consistent styling
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
 function ProductDetails() {
     const { id } = useParams();
     const navigate = useNavigate();
     const { addToCart } = useCart();
+    const { toggleWishlist, isInWishlist } = useWishlist();
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     const [selectedImage, setSelectedImage] = useState(0);
@@ -130,18 +133,23 @@ function ProductDetails() {
                             🛍️ ADD TO BAG
                         </button>
 
-                        <button style={{
-                            padding: '16px',
-                            background: 'white',
-                            border: '1px solid #ddd',
-                            width: '60px',
-                            cursor: 'pointer',
-                            fontSize: '1.2rem',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                        }}>
-                            ♡
+                        <button
+                            onClick={() => toggleWishlist(product)}
+                            style={{
+                                padding: '16px',
+                                background: isInWishlist(product?._id) ? '#ff3f6c' : 'white',
+                                color: isInWishlist(product?._id) ? 'white' : 'inherit',
+                                border: isInWishlist(product?._id) ? 'none' : '1px solid #ddd',
+                                width: '60px',
+                                cursor: 'pointer',
+                                fontSize: '1.2rem',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                transition: 'all 0.3s'
+                            }}
+                        >
+                            {isInWishlist(product?._id) ? '♥' : '♡'}
                         </button>
                     </div>
 
