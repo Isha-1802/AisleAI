@@ -34,8 +34,12 @@ function Wishlist() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '30px', maxWidth: '1400px', margin: '0 auto' }}>
                 {wishlist.map((product) => (
                     <div key={product._id} style={{ background: 'white', position: 'relative' }}>
+                        {/* Remove Button */}
                         <button
-                            onClick={() => removeFromWishlist(product._id)}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                removeFromWishlist(product._id);
+                            }}
                             style={{
                                 position: 'absolute', top: '10px', right: '10px', zIndex: 10,
                                 background: 'white', border: 'none', fontSize: '1.2rem', cursor: 'pointer',
@@ -47,7 +51,8 @@ function Wishlist() {
                             ✕
                         </button>
 
-                        <Link to={`/product/${product._id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                        {/* Product Link Area */}
+                        <Link to={`/product/${product._id}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
                             <div style={{
                                 height: '380px',
                                 backgroundImage: `url(${product.images[0]})`,
@@ -55,7 +60,7 @@ function Wishlist() {
                                 position: 'relative'
                             }}>
                             </div>
-                            <div style={{ padding: '20px', textAlign: 'center' }}>
+                            <div style={{ padding: '20px 20px 0 20px', textAlign: 'center' }}>
                                 <h3 style={{ fontFamily: 'Montserrat', fontSize: '0.8rem', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '8px', letterSpacing: '1px' }}>
                                     {product.brand}
                                 </h3>
@@ -65,23 +70,28 @@ function Wishlist() {
                                 <div style={{ fontFamily: 'Montserrat', fontWeight: 'bold', marginBottom: '16px' }}>
                                     ₹{product.price.toLocaleString()}
                                 </div>
-                                <button
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        addToCart(product);
-                                        removeFromWishlist(product._id); // Optional: remove after adding to bag
-                                        alert('Moved to Bag');
-                                    }}
-                                    style={{
-                                        width: '100%', padding: '12px', background: '#1A1A1A', color: 'white',
-                                        border: 'none', fontFamily: 'Montserrat', fontWeight: '600', letterSpacing: '1px',
-                                        cursor: 'pointer', transition: 'background 0.3s'
-                                    }}
-                                >
-                                    MOVE TO BAG
-                                </button>
                             </div>
                         </Link>
+
+                        {/* Move to Bag Button - Outside Link */}
+                        <div style={{ padding: '0 20px 20px 20px' }}>
+                            <button
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    addToCart(product);
+                                    removeFromWishlist(product._id);
+                                    alert('Moved to Bag');
+                                }}
+                                style={{
+                                    width: '100%', padding: '12px', background: '#1A1A1A', color: 'white',
+                                    border: 'none', fontFamily: 'Montserrat', fontWeight: '600', letterSpacing: '1px',
+                                    cursor: 'pointer', transition: 'background 0.3s'
+                                }}
+                            >
+                                MOVE TO BAG
+                            </button>
+                        </div>
                     </div>
                 ))}
             </div>
