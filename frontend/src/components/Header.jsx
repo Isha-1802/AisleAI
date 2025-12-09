@@ -2,10 +2,12 @@ import { Link } from 'react-router-dom';
 import { useState, useRef } from 'react';
 import { megaMenuData } from '../data/megaMenuData';
 import { useCart } from '../context/CartContext';
+import { useWishlist } from '../context/WishlistContext';
 import './Header.css';
 
 function Header({ user, onLogout }) {
     const { getCartCount } = useCart();
+    const { wishlist } = useWishlist();
     const [showUserMenu, setShowUserMenu] = useState(false);
     const [showMegaMenu, setShowMegaMenu] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -132,10 +134,30 @@ function Header({ user, onLogout }) {
                         className="icon-luxury"
                         title="Wishlist"
                         aria-label="Wishlist"
+                        style={{ position: 'relative' }}
                     >
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
                             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                         </svg>
+                        {wishlist.length > 0 && (
+                            <span className="cart-badge" style={{
+                                position: 'absolute',
+                                top: '-2px',
+                                right: '-2px',
+                                background: '#ff3f6c',
+                                color: 'white',
+                                fontSize: '9px',
+                                width: '14px',
+                                height: '14px',
+                                borderRadius: '50%',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontWeight: '600'
+                            }}>
+                                {wishlist.length}
+                            </span>
+                        )}
                     </Link>
 
                     <Link
