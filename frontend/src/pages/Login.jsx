@@ -21,7 +21,8 @@ function Login({ setUser }) {
             localStorage.setItem('token', response.data.token);
             localStorage.setItem('user', JSON.stringify(response.data.user));
             setUser(response.data.user);
-            navigate('/');
+            // Force page reload to ensure Header updates
+            window.location.href = '/';
         } catch (err) {
             setError(err.response?.data?.error || 'Login failed');
         } finally {
