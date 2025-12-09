@@ -94,6 +94,7 @@ function Collections() {
             params.append('sort', sortBy);
             params.append('page', page);
             params.append('limit', '20');
+            params.append('_t', Date.now()); // Force fresh fetch
 
             const response = await axios.get(`${API_URL}/products?${params}`);
 

@@ -36,6 +36,7 @@ function Footer() {
                         <ul>
                             <li><Link to="/collections">Shop All</Link></li>
                             <li><Link to="/style-hub">Style Hub</Link></li>
+
                             <li><Link to="/ai-stylist">AI Stylist</Link></li>
                         </ul>
                     </div>

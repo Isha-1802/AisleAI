@@ -858,28 +858,32 @@
 
     .hero-emphasis {
         letter-spacing: 4px;
-        display: block; /* Stack it */
+        display: block;
+        /* Stack it */
         margin-top: 8px;
     }
-    
+
     .hero-pretitle {
         font-size: 10px;
         letter-spacing: 2px;
     }
 
     .collections-grid-white {
-        grid-template-columns: 1fr; /* Single column for luxury feel on mobile */
+        grid-template-columns: 1fr;
+        /* Single column for luxury feel on mobile */
         max-width: 300px;
         margin: 0 auto;
     }
 
     .offer-card {
-        min-width: 85vw; /* use Viewport Width */
+        min-width: 85vw;
+        /* use Viewport Width */
         height: 400px;
     }
-    
+
     .offers-scroll-container {
-        padding-left: 24px; /* Peeking effect */
+        padding-left: 24px;
+        /* Peeking effect */
     }
 
     .occasions-grid-white {
@@ -898,12 +902,12 @@
     .container-white {
         padding: 0 24px;
     }
-    
+
     .brands-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 12px;
     }
-    
+
     .brand-item {
         padding: 20px 10px;
         font-size: 10px;

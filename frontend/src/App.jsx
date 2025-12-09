@@ -1,5 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { CartProvider } from './context/CartContext';
+import { WishlistProvider } from './context/WishlistContext';
 import Header from './components/Header';
 import Home from './pages/Home';
 import Collections from './pages/Collections';
@@ -74,8 +76,12 @@ function App() {
 
   return (
     <Router>
-      <ScrollToTop />
-      <AppContent user={user} setUser={setUser} handleLogout={handleLogout} />
+      <WishlistProvider>
+        <CartProvider>
+          <ScrollToTop />
+          <AppContent user={user} setUser={setUser} handleLogout={handleLogout} />
+        </CartProvider>
+      </WishlistProvider>
     </Router>
   );
 }

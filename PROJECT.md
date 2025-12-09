@@ -45,46 +45,83 @@ AisleAI is a modern, full-stack **MERN** application designed to revolutionize l
 
 ---
 
-## 3. 🚀 FEATURES & DETAILED WORKFLOWS
+## AisleAI - Premium Fashion E-Commerce Platform
+**Project Status: Production Ready (v1.2)**
+**Last Updated:** December 09, 2025
 
-### **A. The Home Page (`Home.jsx`)**
-*   **Hero Section:** Features a "Luxury Ivory" theme with a "Shop Collection" CTA.
-*   **Parallax Effect:** The "Maisons" section uses a fixed background image that creates a depth effect as you scroll.
-*   **Featured Collections:** Displays a grid of categories (Ready-to-Wear, Accessories).
+AisleAI is a luxury fashion e-commerce platform that combines aesthetic excellence with robust functionality. It features a responsive React frontend, a Node.js/Express backend, and MongoDB database, fully deployed on Vercel (Frontend) and Render (Backend).
 
-### **B. Authentication (The Gatekeeper)**
-1.  **User Signs Up:** Enters details in `Register.jsx`.
-2.  **Backend Action:** `authController.register` hashes the password using `bcryptjs` and saves the user to MongoDB.
-3.  **Token Creation:** A **JWT** is generated and sent back.
-4.  **Frontend Action:** The token is stored in `localStorage`. The Navbar updates to show the user's name.
+---
 
-### **C. The Atelier (Style Hub) - AI Quizzes**
-*   **Location:** `StyleHub.jsx`
-*   **What it does:** Offers 4 quizzes: Color Analysis, Body Shape, Skincare, Makeup.
-*   **The Flow:**
-    1.  User selects a quiz (e.g., Color Analysis).
-    2.  Answers a series of questions (stored in `quizAnswers` state).
-    3.  **Submission:** On the last question, `submitQuiz` is called.
-    4.  **API Call:** Sends answers to `POST /api/style-hub/quiz-result`.
-    5.  **AI Magic (Backend):**
-        *   `styleHub.js` receives the answers.
-        *   It constructs a specific prompt for the **Groq API**.
-        *   **Prompt Engineering:** We explicitly tell the AI to format the output with `###` separators and `**bold**` text.
-    6.  **Rendering (Frontend):**
-        *   The frontend receives the text.
-        *   It parses the `###` to split the text into 3 sections.
-        *   It renders **3 Elegant Cards**: "The Profile", "The Recommendations", "The Strategy".
-        *   It applies **Montserrat** font for readability and renders bullet points with gold accents.
+## 🚀 Key Features Implemented
 
-### **D. AI Stylist (Chat)**
-*   **Location:** `AiStylist.jsx`
-*   **Function:** A chat interface where users can ask open-ended fashion questions.
-*   **Backend:** Uses `routes/chat.js` to send the conversation history to Groq and get a conversational response.
+### 1. **Advanced Search Functionality**
+-   **Debounced Search:** The search bar in the "Collections" page uses a custom `useDebounce` hook (500ms delay). This ensures smooth typing without firing excessive API calls.
+-   **URL Sync:** Search queries are instantly reflected in the URL parameters (e.g., `?search=lipstick`), allowing search results to be shared or bookmarked.
+-   **Auto-Reset:** Searching automatically resets the pagination to Page 1 for consistent results.
 
-### **E. Shop & Collections**
-*   **Location:** `Collections.jsx`
-*   **Function:** Fetches products from `GET /api/products`.
-*   **Display:** Renders a grid of `ProductCard` components.
+### 2. **Wishlist System**
+-   **Global State:** Managed via `WishlistContext`, accessible from anywhere in the app.
+-   **Badge Notification:** The Header Wishlist icon displays a real-time count badge (red) when items are added.
+-   **Smart Interaction:**
+    -   **Product Cards:** "Heart" button is purely functional and does not trigger the product page link (event propagation fixed).
+    -   **Visual Feedback:** Heart turns red (`#ff3f6c`) when active.
+    -   **Management:** Users can "Move to Bag" or "Remove" items directly from the dedicated Wishlist page.
+
+### 3. **Product Experience**
+-   **Dynamic Routing:** Individual product pages (`/product/:id`) fetch data dynamically.
+-   **Clean UI:** Refactored Product Cards prevent invalid HTML nesting (Buttons outside of Anchors) for reliable cross-browser performance.
+-   **Filters:** Robust filtering by Category, Brand, Price, and Occasion.
+
+---
+
+## 🔍 How to Inspect & Demo (Evaluation Guide)
+
+Follow these steps to demonstrate the application's full capabilities during evaluation:
+
+### **Scene 1: The Search Demo (Responsiveness)**
+1.  Navigate to the **Collections** page.
+2.  Locate the Search Bar at the top right of the product grid.
+3.  **Action:** Type "Maybelline" slowly.
+4.  **Observation:** Notice the URL changes to `.../collections?search=Maybelline` automatically. The product grid updates to show only matching items without you pressing "Enter". This demonstrates **Debouncing**.
+5.  **Action:** Clear the text.
+6.  **Observation:** The grid restores to show all products.
+
+### **Scene 2: The Wishlist Flow (State Management)**
+1.  On the Collections page, find any product card (e.g., a Dress).
+2.  **Action:** Click the empty "Heart" icon on the card.
+3.  **Observation:**
+    -   The Heart turns **Red**.
+    -   Look at the **Header**: A red number badge (e.g., "1") appears on the Wishlist icon.
+4.  **Action:** Click the Header Wishlist Icon.
+5.  **Observation:** You are navigated to the **Wishlist Page**. The item is present there.
+6.  **Action:** Click "**Move to Bag**".
+7.  **Observation:** An alert confirms the move, the item leaves the wishlist, and the Cart counter in the header increments.
+
+### **Scene 3: Product Details & Cart**
+1.  Go back to Collections.
+2.  **Action:** Click on any Product Image.
+3.  **Observation:** You are taken to the **Product Details Page**.
+4.  **Action:** Click "**Add to Bag**".
+5.  **Observation:** Success alert appears. The Cart badge updates immediately.
+
+### **Scene 4: Filters**
+1.  On Collections page, verify the Sidebar filters.
+2.  **Action:** Select a Category (e.g., "Dresses") and a Price Range.
+3.  **Observation:** The grid filters dynamically.
+
+---
+
+## 🛠 Recent Critical Fixes (Quality Assurance)
+-   **Fix:** Resolved "Missing closing div" build errors in `Collections.jsx` ensuring 100% successful Vercel deployments.
+-   **Fix:** Removed recursive/duplicate imports in `ProductDetails.jsx` that were causing build collisions.
+-   **Fix:** Refactored `ProductCard` to move `<button>` elements outside of `<a href...>` tags, adhering to valid HTML5 standards and fixing click-blocking issues.
+
+## 🔗 Live Deployment
+-   **Frontend:** `https://aisle-ai-4avu.vercel.app`
+-   **Backend:** `https://aisle-ai-production.onrender.com`
+
+*Good luck with the presentation! The project is stable and feature-complete.*
 
 ---
 

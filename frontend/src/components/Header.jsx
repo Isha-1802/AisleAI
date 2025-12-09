@@ -123,6 +123,7 @@ function Header({ user, onLogout }) {
                         )}
                     </div>
 
+
                     <Link to="/style-hub" className="nav-item-luxury">ATELIER</Link>
                     <Link to="/ai-stylist" className="nav-item-luxury">STYLIST</Link>
                 </nav>
@@ -239,6 +240,7 @@ function Header({ user, onLogout }) {
                     <div className="mobile-menu-content">
                         <Link to="/" onClick={() => setMobileMenuOpen(false)}>HOME</Link>
                         <Link to="/collections" onClick={() => setMobileMenuOpen(false)}>COLLECTIONS</Link>
+
                         <Link to="/style-hub" onClick={() => setMobileMenuOpen(false)}>ATELIER</Link>
                         <Link to="/ai-stylist" onClick={() => setMobileMenuOpen(false)}>STYLIST</Link>
                         <div className="mobile-divider"></div>
