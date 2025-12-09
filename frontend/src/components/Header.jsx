@@ -1,9 +1,11 @@
 import { Link } from 'react-router-dom';
 import { useState, useRef } from 'react';
 import { megaMenuData } from '../data/megaMenuData';
+import { useCart } from '../context/CartContext';
 import './Header.css';
 
 function Header({ user, onLogout }) {
+    const { getCartCount } = useCart();
     const [showUserMenu, setShowUserMenu] = useState(false);
     const [showMegaMenu, setShowMegaMenu] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -141,12 +143,32 @@ function Header({ user, onLogout }) {
                         className="icon-luxury"
                         title="Shopping"
                         aria-label="Cart"
+                        style={{ position: 'relative' }}
                     >
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
                             <circle cx="9" cy="21" r="1"></circle>
                             <circle cx="20" cy="21" r="1"></circle>
                             <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
                         </svg>
+                        {getCartCount() > 0 && (
+                            <span className="cart-badge" style={{
+                                position: 'absolute',
+                                top: '0',
+                                right: '0',
+                                background: '#1A1A1A',
+                                color: 'white',
+                                fontSize: '10px',
+                                width: '16px',
+                                height: '16px',
+                                borderRadius: '50%',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontWeight: '600'
+                            }}>
+                                {getCartCount()}
+                            </span>
+                        )}
                     </Link>
 
                     {user ? (

@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Home from './pages/Home';
 import Collections from './pages/Collections';
-import ProductDetail from './pages/ProductDetail';
 import StyleHub from './pages/StyleHub';
 import AIStylist from './pages/AIStylist';
 import Login from './pages/Login';
@@ -11,6 +10,7 @@ import Register from './pages/Register';
 import Profile from './pages/Profile';
 import Wishlist from './pages/Wishlist';
 import Cart from './pages/Cart';
+import ProductDetails from './pages/ProductDetails';
 import InfoPage from './pages/InfoPage';
 import ScrollToTop from './components/ScrollToTop';
 import Footer from './components/Footer';
@@ -26,7 +26,6 @@ function AppContent({ user, setUser, handleLogout }) {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/collections" element={<Collections />} />
-        <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/style-hub" element={<StyleHub />} />
         <Route path="/ai-stylist" element={<AIStylist user={user} />} />
         <Route path="/login" element={<Login setUser={setUser} />} />
@@ -34,6 +33,7 @@ function AppContent({ user, setUser, handleLogout }) {
         <Route path="/profile" element={<Profile user={user} onLogout={handleLogout} />} />
         <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/product/:id" element={<ProductDetails />} />
 
         {/* Info Pages */}
         <Route path="/about" element={<InfoPage type="about" />} />

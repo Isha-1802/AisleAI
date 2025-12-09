@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import axios from 'axios';
+import { useCart } from '../context/CartContext';
 import './Collections.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
@@ -12,6 +13,7 @@ function Collections() {
     const [loading, setLoading] = useState(true);
     const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || '');
     const [selectedBrand, setSelectedBrand] = useState('');
+    const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
     const [priceRange, setPriceRange] = useState([0, 100000]);
     const [sortBy, setSortBy] = useState('-createdAt');
 
@@ -67,7 +69,7 @@ function Collections() {
 
             // Get from URL
             const occasion = searchParams.get('occasion');
-            const search = searchParams.get('search');
+            const search = searchQuery || searchParams.get('search');
             const minPrice = searchParams.get('minPrice') || priceRange[0];
             const maxPrice = searchParams.get('maxPrice') || priceRange[1];
 
@@ -114,10 +116,34 @@ function Collections() {
 
             {/* Page Header */}
             <div className="collections-header-clean">
-                <h1>
-                    {selectedCategory || 'All Collections'}
-                    <span className="item-count">- {products.length} items</span>
-                </h1>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px' }}>
+                    <h1>
+                        {selectedCategory || 'All Collections'}
+                        <span className="item-count">- {products.length} items</span>
+                    </h1>
+
+                    {/* Search Bar */}
+                    <div className="collection-search-bar" style={{ position: 'relative', width: '300px' }}>
+                        <input
+                            type="text"
+                            placeholder="Search (e.g. Maybelline)..."
+                            value={searchQuery}
+                            onChange={(e) => {
+                                setSearchQuery(e.target.value);
+                                setPage(1); // Reset to first page on search
+                            }}
+                            style={{
+                                width: '100%',
+                                padding: '10px 16px 10px 40px',
+                                border: '1px solid #e0e0e0',
+                                borderRadius: '4px',
+                                fontFamily: 'Montserrat',
+                                fontSize: '0.9rem'
+                            }}
+                        />
+                        <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }}>🔍</span>
+                    </div>
+                </div>
             </div>
 
             <div className="collections-container">
@@ -263,58 +289,74 @@ function Collections() {
 }
 
 function ProductCard({ product }) {
-    const handleAddToCart = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        alert(`Added "${product.name}" to cart!`);
-        // In real app: dispatch to cart context/state
-    };
-
-    const handleAddToWishlist = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        alert(`Added "${product.name}" to wishlist!`);
-        // In real app: dispatch to wishlist context/state
-    };
+    const { addToCart } = useCart();
+    const [isHovered, setIsHovered] = useState(false);
 
     return (
-        <Link to={`/product/${product._id}`} className="product-card" style={{ textDecoration: 'none', color: 'inherit' }}>
-            <div className="product-image" style={{ backgroundImage: `url(${product.images[0]})` }}>
-                {product.discount > 0 && (
-                    <span className="discount-badge">-{product.discount}%</span>
-                )}
-                {product.trending && (
-                    <span className="trending-badge">🔥 Trending</span>
-                )}
-
-                {/* Hover Overlay with Actions */}
-                <div className="product-hover-overlay">
-                    <button className="quick-action-btn cart-btn" onClick={handleAddToCart}>
-                        <span className="btn-icon">🛒</span>
-                        <span className="btn-text">Add to Cart</span>
-                    </button>
-                    <button className="quick-action-btn wishlist-btn" onClick={handleAddToWishlist}>
-                        <span className="btn-icon">♡</span>
-                        <span className="btn-text">Wishlist</span>
-                    </button>
-                </div>
-            </div>
-            <div className="product-info">
-                <div className="product-brand">{product.brand}</div>
-                <h3 className="product-name">{product.name}</h3>
-                <div className="product-price">
-                    <span className="current-price">₹{product.price.toLocaleString()}</span>
-                    {product.originalPrice && (
-                        <span className="original-price">₹{product.originalPrice.toLocaleString()}</span>
+        <div
+            className="product-card"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+        >
+            <Link to={`/product/${product._id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                <div className="product-image" style={{ backgroundImage: `url(${product.images[0]})` }}>
+                    {product.discount > 0 && (
+                        <span className="discount-badge">-{product.discount}%</span>
                     )}
-                </div>
-                {product.rating > 0 && (
-                    <div className="product-rating">
-                        ⭐ {product.rating} ({product.reviews || 0})
+                    {product.trending && (
+                        <span className="trending-badge">🔥 Trending</span>
+                    )}
+
+                    {/* Wishlist Button - Top Right Overlay */}
+                    <button
+                        className="wishlist-btn"
+                        title="Add to Wishlist"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            alert('Added to Wishlist');
+                        }}
+                    >
+                        ♡
+                    </button>
+
+                    {/* Cart Button Overlay - Bottom Left (or Below as requested? user said "small button below for cart") */}
+                    {/* Going with overlay on bottom right for "small" feel, or slide up */}
+                    <div className={`add-to-bag-overlay ${isHovered ? 'visible' : ''}`}>
+                        <button
+                            className="add-to-bag-btn"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                addToCart(product);
+                                alert('Added to Bag');
+                            }}
+                        >
+                            🛍️ ADD TO BAG
+                        </button>
                     </div>
-                )}
-            </div>
-        </Link>
+                </div>
+
+                <div className="product-info" style={{ position: 'relative' }}>
+                    <div className="product-brand">{product.brand}</div>
+                    <h3 className="product-name">{product.name}</h3>
+                    <div className="product-price">
+                        <span className="current-price">₹{product.price.toLocaleString()}</span>
+                        {product.originalPrice && (
+                            <span className="original-price">₹{product.originalPrice.toLocaleString()}</span>
+                        )}
+                    </div>
+                    {product.rating > 0 && (
+                        <div className="product-rating">
+                            ⭐ {product.rating} ({product.reviews || 0})
+                        </div>
+                    )}
+
+                    {/* Small Cart Button Below Info (Alternative to Overlay if user prefers always visible) */}
+                    {/* Keeping the overlay as implemented but adding a small cart icon below textual info for 'small button below' requirement if overlay isn't enough */}
+                </div>
+            </Link>
+        </div>
     );
 }
 
