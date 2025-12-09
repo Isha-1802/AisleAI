@@ -306,49 +306,62 @@ function ProductCard({ product }) {
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
-            <Link to={`/product/${product._id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                <div className="product-image" style={{ backgroundImage: `url(${product.images[0]})` }}>
-                    {product.discount > 0 && (
-                        <span className="discount-badge">-{product.discount}%</span>
-                    )}
-                    {product.trending && (
-                        <span className="trending-badge">🔥 Trending</span>
-                    )}
+            <div className="product-image" style={{ position: 'relative', overflow: 'hidden' }}>
+                {/* Background Image Link */}
+                <Link to={`/product/${product._id}`} style={{ display: 'block', width: '100%', height: '100%' }}>
+                    <div style={{
+                        width: '100%',
+                        height: '100%',
+                        backgroundImage: `url(${product.images[0]})`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        aspectRatio: '3/4'
+                    }} />
+                </Link>
 
-                    {/* Wishlist Button - Top Right Overlay */}
+                {/* Badges */}
+                {product.discount > 0 && (
+                    <span className="discount-badge">-{product.discount}%</span>
+                )}
+                {product.trending && (
+                    <span className="trending-badge">🔥 Trending</span>
+                )}
+
+                {/* Wishlist Button - Direct Child of Container, Z-Index High */}
+                <button
+                    className="wishlist-btn"
+                    title={isInWishlist(product._id) ? "Remove from Wishlist" : "Add to Wishlist"}
+                    onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        toggleWishlist(product);
+                    }}
+                    style={{
+                        color: isInWishlist(product._id) ? '#ff3f6c' : '#666',
+                        opacity: isInWishlist(product._id) ? 1 : (isHovered ? 1 : 0),
+                        zIndex: 20
+                    }}
+                >
+                    {isInWishlist(product._id) ? '♥' : '♡'}
+                </button>
+
+                {/* Add to Bag Overlay */}
+                <div className={`add-to-bag-overlay ${isHovered ? 'visible' : ''}`} style={{ zIndex: 15 }}>
                     <button
-                        className="wishlist-btn"
-                        title="Add to Wishlist"
+                        className="add-to-bag-btn"
                         onClick={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
-                            toggleWishlist(product);
-                        }}
-                        style={{
-                            color: isInWishlist(product._id) ? '#ff3f6c' : '#666',
-                            opacity: isInWishlist(product._id) ? 1 : undefined
+                            addToCart(product);
+                            alert('Added to Bag');
                         }}
                     >
-                        {isInWishlist(product._id) ? '♥' : '♡'}
+                        🛍️ ADD TO BAG
                     </button>
-
-                    {/* Cart Button Overlay - Bottom Left (or Below as requested? user said "small button below for cart") */}
-                    {/* Going with overlay on bottom right for "small" feel, or slide up */}
-                    <div className={`add-to-bag-overlay ${isHovered ? 'visible' : ''}`}>
-                        <button
-                            className="add-to-bag-btn"
-                            onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                addToCart(product);
-                                alert('Added to Bag');
-                            }}
-                        >
-                            🛍️ ADD TO BAG
-                        </button>
-                    </div>
                 </div>
+            </div>
 
+            <Link to={`/product/${product._id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                 <div className="product-info" style={{ position: 'relative' }}>
                     <div className="product-brand">{product.brand}</div>
                     <h3 className="product-name">{product.name}</h3>
@@ -358,16 +371,15 @@ function ProductCard({ product }) {
                             <span className="original-price">₹{product.originalPrice.toLocaleString()}</span>
                         )}
                     </div>
-                    {product.rating > 0 && (
-                        <div className="product-rating">
-                            ⭐ {product.rating} ({product.reviews || 0})
-                        </div>
-                    )}
-
-                    {/* Small Cart Button Below Info (Alternative to Overlay if user prefers always visible) */}
-                    {/* Keeping the overlay as implemented but adding a small cart icon below textual info for 'small button below' requirement if overlay isn't enough */}
                 </div>
             </Link>
+
+            {/* Rating outside link if desired, or inside */}
+            {product.rating > 0 && (
+                <div className="product-rating" style={{ padding: '0 16px 16px' }}>
+                    ⭐ {product.rating} ({product.reviews || 0})
+                </div>
+            )}
         </div>
     );
 }
