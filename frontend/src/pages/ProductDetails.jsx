@@ -2,10 +2,9 @@ import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useCart } from '../context/CartContext';
-import './Collections.css'; // Reusing collections CSS for consistent styling
-import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import './Collections.css'; // Reusing collections CSS for consistent styling
+
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
 function ProductDetails() {
