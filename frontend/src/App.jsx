@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Home from './pages/Home';
 import Collections from './pages/Collections';
+import ProductDetail from './pages/ProductDetail';
 import StyleHub from './pages/StyleHub';
 import AIStylist from './pages/AIStylist';
 import Login from './pages/Login';
@@ -25,6 +26,7 @@ function AppContent({ user, setUser, handleLogout }) {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/collections" element={<Collections />} />
+        <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/style-hub" element={<StyleHub />} />
         <Route path="/ai-stylist" element={<AIStylist user={user} />} />
         <Route path="/login" element={<Login setUser={setUser} />} />

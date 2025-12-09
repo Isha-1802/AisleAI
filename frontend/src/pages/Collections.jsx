@@ -263,20 +263,8 @@ function Collections() {
 }
 
 function ProductCard({ product }) {
-    const handleClick = async () => {
-        // This will trigger an API call visible in Network tab
-        try {
-            const response = await axios.get(`${API_URL}/products/${product._id}`);
-            console.log('Product details fetched:', response.data);
-            // You can navigate to a detail page or show a modal here
-            alert(`Product: ${product.name}\nPrice: ₹${product.price}\nBrand: ${product.brand}\n\nCheck Network tab to see the API call!`);
-        } catch (error) {
-            console.error('Failed to fetch product details:', error);
-        }
-    };
-
     return (
-        <div className="product-card" onClick={handleClick} style={{ cursor: 'pointer' }}>
+        <Link to={`/product/${product._id}`} className="product-card" style={{ textDecoration: 'none', color: 'inherit' }}>
             <div className="product-image" style={{ backgroundImage: `url(${product.images[0]})` }}>
                 {product.discount > 0 && (
                     <span className="discount-badge">-{product.discount}%</span>
@@ -300,7 +288,7 @@ function ProductCard({ product }) {
                     </div>
                 )}
             </div>
-        </div>
+        </Link>
     );
 }
 
