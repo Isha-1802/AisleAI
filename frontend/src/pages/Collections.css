@@ -334,6 +334,90 @@
     border: 1px solid #e8e6e1;
 }
 
+/* Hover Overlay */
+.product-hover-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 10;
+}
+
+.product-card:hover .product-hover-overlay {
+    opacity: 1;
+}
+
+.quick-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: white;
+    border: 2px solid white;
+    border-radius: 4px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    transform: translateY(10px);
+    opacity: 0;
+}
+
+.product-card:hover .quick-action-btn {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.product-card:hover .quick-action-btn:nth-child(1) {
+    transition-delay: 0.1s;
+}
+
+.product-card:hover .quick-action-btn:nth-child(2) {
+    transition-delay: 0.15s;
+}
+
+.quick-action-btn.cart-btn {
+    color: #2c2c2c;
+}
+
+.quick-action-btn.cart-btn:hover {
+    background: #2c2c2c;
+    color: white;
+    transform: scale(1.05);
+}
+
+.quick-action-btn.wishlist-btn {
+    color: #e74c3c;
+    border-color: #e74c3c;
+    background: transparent;
+}
+
+.quick-action-btn.wishlist-btn:hover {
+    background: #e74c3c;
+    color: white;
+    transform: scale(1.05);
+}
+
+.btn-icon {
+    font-size: 16px;
+}
+
+.btn-text {
+    text-transform: uppercase;
+}
+
+
 /* Product Info */
 .product-info {
     padding: 16px;
@@ -483,6 +567,17 @@
         width: 100%;
         padding: 14px 20px !important;
     }
+
+    /* Mobile hover overlay adjustments */
+    .quick-action-btn {
+        padding: 10px 18px;
+        font-size: 11px;
+        gap: 6px;
+    }
+
+    .btn-icon {
+        font-size: 14px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -565,5 +660,21 @@
 
     .pagination-container p {
         font-size: 0.8rem !important;
+    }
+
+    /* Small mobile hover overlay */
+    .quick-action-btn {
+        padding: 8px 14px;
+        font-size: 10px;
+        gap: 4px;
+    }
+
+    .btn-icon {
+        font-size: 12px;
+    }
+
+    .btn-text {
+        display: none;
+        /* Hide text on very small screens, show only icons */
     }
 }

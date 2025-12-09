@@ -263,6 +263,20 @@ function Collections() {
 }
 
 function ProductCard({ product }) {
+    const handleAddToCart = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        alert(`Added "${product.name}" to cart!`);
+        // In real app: dispatch to cart context/state
+    };
+
+    const handleAddToWishlist = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        alert(`Added "${product.name}" to wishlist!`);
+        // In real app: dispatch to wishlist context/state
+    };
+
     return (
         <Link to={`/product/${product._id}`} className="product-card" style={{ textDecoration: 'none', color: 'inherit' }}>
             <div className="product-image" style={{ backgroundImage: `url(${product.images[0]})` }}>
@@ -272,6 +286,18 @@ function ProductCard({ product }) {
                 {product.trending && (
                     <span className="trending-badge">🔥 Trending</span>
                 )}
+
+                {/* Hover Overlay with Actions */}
+                <div className="product-hover-overlay">
+                    <button className="quick-action-btn cart-btn" onClick={handleAddToCart}>
+                        <span className="btn-icon">🛒</span>
+                        <span className="btn-text">Add to Cart</span>
+                    </button>
+                    <button className="quick-action-btn wishlist-btn" onClick={handleAddToWishlist}>
+                        <span className="btn-icon">♡</span>
+                        <span className="btn-text">Wishlist</span>
+                    </button>
+                </div>
             </div>
             <div className="product-info">
                 <div className="product-brand">{product.brand}</div>
