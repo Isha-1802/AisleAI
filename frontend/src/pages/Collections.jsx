@@ -263,8 +263,74 @@ function Collections() {
 }
 
 function ProductCard({ product }) {
+    const [isFavorite, setIsFavorite] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleAddToFavorites = async (e) => {
+        e.stopPropagation(); // Prevent card click
+
+        const token = localStorage.getItem('token');
+        if (!token) {
+            alert('Please login to add favorites');
+            return;
+        }
+
+        setIsLoading(true);
+        try {
+            await axios.post(
+                `${API_URL}/user/favorites`,
+                { productId: product._id },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            setIsFavorite(true);
+            alert('Added to favorites! ✓');
+        } catch (error) {
+            console.error('Failed to add to favorites:', error);
+            alert(error.response?.data?.error || 'Failed to add to favorites');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
-        <div className="product-card">
+        <div className="product-card" style={{ position: 'relative' }}>
+            {/* Favorite Heart Button */}
+            <button
+                onClick={handleAddToFavorites}
+                disabled={isLoading || isFavorite}
+                style={{
+                    position: 'absolute',
+                    top: '12px',
+                    right: '12px',
+                    background: 'rgba(255, 255, 255, 0.9)',
+                    border: 'none',
+                    borderRadius: '50%',
+                    width: '36px',
+                    height: '36px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: isLoading || isFavorite ? 'default' : 'pointer',
+                    fontSize: '18px',
+                    transition: 'all 0.3s ease',
+                    zIndex: 10,
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                }}
+                onMouseEnter={(e) => {
+                    if (!isFavorite && !isLoading) {
+                        e.target.style.transform = 'scale(1.1)';
+                        e.target.style.background = '#fff';
+                    }
+                }}
+                onMouseLeave={(e) => {
+                    e.target.style.transform = 'scale(1)';
+                    e.target.style.background = 'rgba(255, 255, 255, 0.9)';
+                }}
+                title={isFavorite ? 'Added to favorites' : 'Add to favorites'}
+            >
+                {isLoading ? '⏳' : isFavorite ? '❤️' : '🤍'}
+            </button>
+
             <div className="product-image" style={{ backgroundImage: `url(${product.images[0]})` }}>
                 {product.discount > 0 && (
                     <span className="discount-badge">-{product.discount}%</span>
