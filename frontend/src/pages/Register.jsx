@@ -21,8 +21,7 @@ function Register({ setUser }) {
             localStorage.setItem('token', response.data.token);
             localStorage.setItem('user', JSON.stringify(response.data.user));
             setUser(response.data.user);
-            // Force page reload to ensure Header updates
-            window.location.href = '/';
+            navigate('/');
         } catch (err) {
             setError(err.response?.data?.error || 'Registration failed');
         } finally {

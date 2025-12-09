@@ -1,0 +1,143 @@
+.wishlist-page {
+    min-height: calc(100vh - 80px);
+    background: #fafafa;
+    padding: 120px 48px 48px;
+}
+
+.wishlist-container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.wishlist-header {
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.wishlist-header h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: #2c2c2c;
+    margin: 0;
+}
+
+.wishlist-header .item-count {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    color: #999;
+    letter-spacing: 1px;
+}
+
+.empty-wishlist {
+    text-align: center;
+    padding: 80px 24px;
+    background: white;
+    border-radius: 8px;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.empty-icon {
+    font-size: 80px;
+    margin-bottom: 24px;
+    color: #e74c3c;
+}
+
+.empty-wishlist h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    color: #2c2c2c;
+    margin-bottom: 12px;
+}
+
+.empty-wishlist p {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 32px;
+    line-height: 1.6;
+}
+
+.shop-btn {
+    display: inline-block;
+    padding: 14px 32px;
+    background: #2c2c2c;
+    color: white;
+    text-decoration: none;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    border-radius: 4px;
+    transition: background 0.3s ease;
+}
+
+.shop-btn:hover {
+    background: #1a1a1a;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .wishlist-page {
+        padding: 100px 32px 32px;
+    }
+}
+
+@media (max-width: 768px) {
+    .wishlist-page {
+        padding: 90px 20px 24px;
+    }
+
+    .wishlist-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        margin-bottom: 24px;
+    }
+
+    .wishlist-header h1 {
+        font-size: 2rem;
+    }
+
+    .empty-wishlist {
+        padding: 60px 20px;
+    }
+
+    .empty-icon {
+        font-size: 60px;
+    }
+
+    .empty-wishlist h2 {
+        font-size: 1.6rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .wishlist-page {
+        padding: 80px 16px 24px;
+    }
+
+    .wishlist-header h1 {
+        font-size: 1.6rem;
+    }
+
+    .empty-wishlist {
+        padding: 40px 16px;
+    }
+
+    .empty-icon {
+        font-size: 50px;
+    }
+
+    .empty-wishlist h2 {
+        font-size: 1.4rem;
+    }
+
+    .shop-btn {
+        padding: 12px 24px;
+        font-size: 12px;
+    }
+}
