@@ -295,6 +295,12 @@
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
 }
 
+/* Show Add to Cart button on hover */
+.product-card:hover .add-to-cart-btn {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+}
+
 .product-image {
     position: relative;
     aspect-ratio: 3/4;

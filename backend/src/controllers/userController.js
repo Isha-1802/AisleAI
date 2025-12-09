@@ -87,3 +87,73 @@ exports.removeFavorite = async (req, res) => {
         res.status(500).json({ error: 'Failed to remove favorite' });
     }
 };
+
+// Get cart
+exports.getCart = async (req, res) => {
+    try {
+        const user = await User.findById(req.userId).populate('cart.product');
+        res.json({ cart: user.cart || [] });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch cart' });
+    }
+};
+
+// Add to cart
+exports.addToCart = async (req, res) => {
+    try {
+        const { productId, quantity = 1 } = req.body;
+
+        const user = await User.findById(req.userId);
+
+        // Check if product already in cart
+        const existingItem = user.cart.find(item => item.product.toString() === productId);
+
+        if (existingItem) {
+            existingItem.quantity += quantity;
+        } else {
+            user.cart.push({ product: productId, quantity });
+        }
+
+        await user.save();
+        res.json({ message: 'Added to cart', cart: user.cart });
+    } catch (error) {
+        console.error('Add to cart error:', error);
+        res.status(500).json({ error: 'Failed to add to cart' });
+    }
+};
+
+// Update cart item quantity
+exports.updateCartItem = async (req, res) => {
+    try {
+        const { productId } = req.params;
+        const { quantity } = req.body;
+
+        const user = await User.findById(req.userId);
+        const cartItem = user.cart.find(item => item.product.toString() === productId);
+
+        if (cartItem) {
+            cartItem.quantity = quantity;
+            await user.save();
+        }
+
+        res.json({ message: 'Cart updated', cart: user.cart });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to update cart' });
+    }
+};
+
+// Remove from cart
+exports.removeFromCart = async (req, res) => {
+    try {
+        const { productId } = req.params;
+
+        const user = await User.findById(req.userId);
+        user.cart = user.cart.filter(item => item.product.toString() !== productId);
+        await user.save();
+
+        res.json({ message: 'Removed from cart', cart: user.cart });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to remove from cart' });
+    }
+};
+

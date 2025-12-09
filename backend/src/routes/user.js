@@ -11,4 +11,11 @@ router.get('/favorites', auth, userController.getFavorites);
 router.post('/favorites', auth, userController.addFavorite);
 router.delete('/favorites/:productId', auth, userController.removeFavorite);
 
+// Cart routes
+router.get('/cart', auth, userController.getCart);
+router.post('/cart', auth, userController.addToCart);
+router.put('/cart/:productId', auth, userController.updateCartItem);
+router.delete('/cart/:productId', auth, userController.removeFromCart);
+
 module.exports = router;
+

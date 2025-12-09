@@ -265,9 +265,10 @@ function Collections() {
 function ProductCard({ product }) {
     const [isFavorite, setIsFavorite] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [isAddingToCart, setIsAddingToCart] = useState(false);
 
     const handleAddToFavorites = async (e) => {
-        e.stopPropagation(); // Prevent card click
+        e.stopPropagation();
 
         const token = localStorage.getItem('token');
         if (!token) {
@@ -283,12 +284,37 @@ function ProductCard({ product }) {
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             setIsFavorite(true);
-            alert('Added to favorites! ✓');
+            alert('Added to wishlist! ✓');
         } catch (error) {
             console.error('Failed to add to favorites:', error);
-            alert(error.response?.data?.error || 'Failed to add to favorites');
+            alert(error.response?.data?.error || 'Failed to add to wishlist');
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    const handleAddToCart = async (e) => {
+        e.stopPropagation();
+
+        const token = localStorage.getItem('token');
+        if (!token) {
+            alert('Please login to add to cart');
+            return;
+        }
+
+        setIsAddingToCart(true);
+        try {
+            await axios.post(
+                `${API_URL}/user/cart`,
+                { productId: product._id, quantity: 1 },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            alert('Added to cart! 🛍️');
+        } catch (error) {
+            console.error('Failed to add to cart:', error);
+            alert(error.response?.data?.error || 'Failed to add to cart');
+        } finally {
+            setIsAddingToCart(false);
         }
     };
 
@@ -326,9 +352,49 @@ function ProductCard({ product }) {
                     e.target.style.transform = 'scale(1)';
                     e.target.style.background = 'rgba(255, 255, 255, 0.9)';
                 }}
-                title={isFavorite ? 'Added to favorites' : 'Add to favorites'}
+                title={isFavorite ? 'Added to wishlist' : 'Add to wishlist'}
             >
                 {isLoading ? '⏳' : isFavorite ? '❤️' : '🤍'}
+            </button>
+
+            {/* Add to Cart Button */}
+            <button
+                onClick={handleAddToCart}
+                disabled={isAddingToCart}
+                style={{
+                    position: 'absolute',
+                    bottom: '12px',
+                    right: '12px',
+                    background: '#1A1A1A',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '4px',
+                    padding: '8px 16px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    cursor: isAddingToCart ? 'wait' : 'pointer',
+                    fontSize: '13px',
+                    fontWeight: '600',
+                    letterSpacing: '0.5px',
+                    transition: 'all 0.3s ease',
+                    zIndex: 10,
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+                    opacity: 0,
+                    transform: 'translateY(10px)'
+                }}
+                className="add-to-cart-btn"
+                onMouseEnter={(e) => {
+                    if (!isAddingToCart) {
+                        e.target.style.background = '#333';
+                    }
+                }}
+                onMouseLeave={(e) => {
+                    e.target.style.background = '#1A1A1A';
+                }}
+                title="Add to cart"
+            >
+                {isAddingToCart ? '⏳' : '🛍️'} {isAddingToCart ? 'ADDING...' : 'ADD TO BAG'}
             </button>
 
             <div className="product-image" style={{ backgroundImage: `url(${product.images[0]})` }}>
