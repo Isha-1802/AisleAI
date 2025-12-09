@@ -61,7 +61,19 @@ function Collections() {
         loadProducts();
     }, [page, selectedCategory, selectedBrand, sortBy, debouncedSearch]); // depend on debouncedSearch
 
-    // ... loadFilters
+    // Load filters only once
+    useEffect(() => {
+        loadFilters();
+    }, []);
+
+    const loadFilters = async () => {
+        try {
+            const response = await axios.get(`${API_URL}/products/filters`);
+            setFilters(response.data);
+        } catch (error) {
+            console.error('Failed to load filters:', error);
+        }
+    };
 
     const loadProducts = async () => {
         setLoading(true);
@@ -69,188 +81,218 @@ function Collections() {
             const params = new URLSearchParams();
             if (selectedCategory) params.append('category', selectedCategory);
             if (selectedBrand) params.append('brand', selectedBrand);
-            if (selectedBrand) params.append('brand', selectedBrand); // (Duplicate removal needed if present)
+            // Deduplicate brand if needed, but the logic above handles it.
 
-            // Get from URL or state
             const occasion = searchParams.get('occasion');
-
-            // Use debounced value
             if (debouncedSearch) params.append('search', debouncedSearch);
 
             const minPrice = searchParams.get('minPrice') || priceRange[0];
             const maxPrice = searchParams.get('maxPrice') || priceRange[1];
 
             if (occasion) params.append('occasion', occasion);
-            // remove redundant search append here
 
             params.append('sort', sortBy);
             params.append('page', page);
             params.append('limit', '20');
 
-            // ... fetch
-            // ...
+            const response = await axios.get(`${API_URL}/products?${params}`);
 
-            // In render:
-            {/* Search Bar */ }
-            <div className="collection-search-bar" style={{ position: 'relative', width: '300px' }}>
-                <input
-                    type="text"
-                    placeholder="Search (e.g. Maybelline)..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    style={{
-                        width: '100%',
-                        padding: '10px 16px 10px 40px',
-                        border: '1px solid #e0e0e0',
-                        borderRadius: '4px',
-                        fontFamily: 'Montserrat',
-                        fontSize: '0.9rem'
-                    }}
-                />
-                <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }}>🔍</span>
-            </div>
-                </div >
-            </div >
+            if (page === 1) {
+                setProducts(response.data.products);
+            } else {
+                setProducts(prev => [...prev, ...response.data.products]);
+            }
+            setTotal(response.data.total);
+        } catch (error) {
+            console.error('Failed to load products:', error);
+            if (page === 1) setProducts([]);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-        <div className="collections-container">
-            {/* Filters Sidebar */}
-            <aside className="filters-sidebar-clean">
-                <h2 className="filters-title">FILTERS</h2>
-
-                {/* Categories */}
-                <div className="filter-section">
-                    <h3 className="filter-heading">CATEGORIES</h3>
-                    <div className="filter-options">
-                        <label className="filter-checkbox">
-                            <input
-                                type="radio"
-                                name="category"
-                                checked={!selectedCategory}
-                                onChange={() => setSelectedCategory('')}
-                            />
-                            <span>All Categories</span>
-                        </label>
-                        {filters.categories?.map(cat => (
-                            <label key={cat} className="filter-checkbox">
-                                <input
-                                    type="radio"
-                                    name="category"
-                                    checked={selectedCategory === cat}
-                                    onChange={() => setSelectedCategory(cat)}
-                                />
-                                <span>{cat}</span>
-                                <span className="filter-count">({Math.floor(Math.random() * 500) + 100})</span>
-                            </label>
-                        ))}
-                    </div>
-                </div>
-
-                {/* Brand */}
-                <div className="filter-section">
-                    <h3 className="filter-heading">
-                        BRAND
-                        <button className="search-icon-btn">🔍</button>
-                    </h3>
-                    <div className="filter-options">
-                        <label className="filter-checkbox">
-                            <input
-                                type="radio"
-                                name="brand"
-                                checked={!selectedBrand}
-                                onChange={() => setSelectedBrand('')}
-                            />
-                            <span>All Brands</span>
-                        </label>
-                        {filters.brands?.slice(0, 8).map(brand => (
-                            <label key={brand} className="filter-checkbox">
-                                <input
-                                    type="radio"
-                                    name="brand"
-                                    checked={selectedBrand === brand}
-                                    onChange={() => setSelectedBrand(brand)}
-                                />
-                                <span>{brand}</span>
-                                <span className="filter-count">({Math.floor(Math.random() * 300) + 50})</span>
-                            </label>
-                        ))}
-                        {filters.brands?.length > 8 && (
-                            <button className="more-btn">+ {filters.brands.length - 8} more</button>
-                        )}
-                    </div>
-                </div>
-
-                {/* Price */}
-                <div className="filter-section">
-                    <h3 className="filter-heading">PRICE</h3>
-                    <div className="price-range">
-                        <input type="range" min="0" max="100000" className="price-slider" />
-                        <div className="price-labels">
-                            <span>₹100</span>
-                            <span>₹10,100+</span>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Sort */}
-                <div className="filter-section">
-                    <h3 className="filter-heading">SORT BY</h3>
-                    <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="sort-select">
-                        <option value="-createdAt">Newest First</option>
-                        <option value="price">Price: Low to High</option>
-                        <option value="-price">Price: High to Low</option>
-                        <option value="-rating">Highest Rated</option>
-                        <option value="-reviews">Most Popular</option>
-                    </select>
-                </div>
-            </aside>
-
-            {/* Products Grid */}
-            <div className="products-section">
-                {products.length === 0 && !loading ? (
-                    <div className="empty">
-                        <p>No products found</p>
-                        <button onClick={() => { setSelectedCategory(''); setSelectedBrand(''); }}>Clear Filters</button>
-                    </div>
-                ) : (
+    return (
+        <div className="collections-page">
+            {/* Breadcrumb */}
+            <div className="breadcrumb">
+                <Link to="/">Home</Link>
+                <span className="breadcrumb-separator">/</span>
+                <Link to="/collections">Collections</Link>
+                {selectedCategory && (
                     <>
-                        <div className="products-grid">
-                            {products.map(product => (
-                                <ProductCard key={product._id} product={product} />
-                            ))}
-                        </div>
-
-                        {/* Pagination - Load More */}
-                        {products.length < total && (
-                            <div className="pagination-container" style={{ textAlign: 'center', margin: '40px 0' }}>
-                                <button
-                                    className="load-more-btn"
-                                    onClick={() => setPage(prev => prev + 1)}
-                                    disabled={loading}
-                                    style={{
-                                        padding: '12px 30px',
-                                        backgroundColor: 'black',
-                                        color: 'white',
-                                        border: 'none',
-                                        borderRadius: '4px',
-                                        cursor: loading ? 'wait' : 'pointer',
-                                        fontFamily: 'Montserrat, sans-serif',
-                                        fontSize: '0.9rem',
-                                        letterSpacing: '1px',
-                                        transition: 'opacity 0.3s'
-                                    }}
-                                >
-                                    {loading ? 'LOADING...' : 'LOAD MORE PRODUCTS'}
-                                </button>
-                                <p style={{ marginTop: '10px', color: '#666', fontSize: '0.9rem' }}>
-                                    Showing {products.length} of {total} products
-                                </p>
-                            </div>
-                        )}
+                        <span className="breadcrumb-separator">/</span>
+                        <span className="breadcrumb-current">{selectedCategory}</span>
                     </>
                 )}
             </div>
-        </div>
-      </div >
+
+            {/* Page Header */}
+            <div className="collections-header-clean">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px' }}>
+                    <h1>
+                        {selectedCategory || 'All Collections'}
+                        <span className="item-count">- {products.length} items</span>
+                    </h1>
+
+                    {/* Search Bar */}
+                    <div className="collection-search-bar" style={{ position: 'relative', width: '300px' }}>
+                        <input
+                            type="text"
+                            placeholder="Search (e.g. Maybelline)..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            style={{
+                                width: '100%',
+                                padding: '10px 16px 10px 40px',
+                                border: '1px solid #e0e0e0',
+                                borderRadius: '4px',
+                                fontFamily: 'Montserrat',
+                                fontSize: '0.9rem'
+                            }}
+                        />
+                        <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }}>🔍</span>
+                    </div>
+                </div>
+            </div>
+            <div className="collections-container">
+                {/* Filters Sidebar */}
+                <aside className="filters-sidebar-clean">
+                    <h2 className="filters-title">FILTERS</h2>
+
+                    {/* Categories */}
+                    <div className="filter-section">
+                        <h3 className="filter-heading">CATEGORIES</h3>
+                        <div className="filter-options">
+                            <label className="filter-checkbox">
+                                <input
+                                    type="radio"
+                                    name="category"
+                                    checked={!selectedCategory}
+                                    onChange={() => setSelectedCategory('')}
+                                />
+                                <span>All Categories</span>
+                            </label>
+                            {filters.categories?.map(cat => (
+                                <label key={cat} className="filter-checkbox">
+                                    <input
+                                        type="radio"
+                                        name="category"
+                                        checked={selectedCategory === cat}
+                                        onChange={() => setSelectedCategory(cat)}
+                                    />
+                                    <span>{cat}</span>
+                                    <span className="filter-count">({Math.floor(Math.random() * 500) + 100})</span>
+                                </label>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Brand */}
+                    <div className="filter-section">
+                        <h3 className="filter-heading">
+                            BRAND
+                            <button className="search-icon-btn">🔍</button>
+                        </h3>
+                        <div className="filter-options">
+                            <label className="filter-checkbox">
+                                <input
+                                    type="radio"
+                                    name="brand"
+                                    checked={!selectedBrand}
+                                    onChange={() => setSelectedBrand('')}
+                                />
+                                <span>All Brands</span>
+                            </label>
+                            {filters.brands?.slice(0, 8).map(brand => (
+                                <label key={brand} className="filter-checkbox">
+                                    <input
+                                        type="radio"
+                                        name="brand"
+                                        checked={selectedBrand === brand}
+                                        onChange={() => setSelectedBrand(brand)}
+                                    />
+                                    <span>{brand}</span>
+                                    <span className="filter-count">({Math.floor(Math.random() * 300) + 50})</span>
+                                </label>
+                            ))}
+                            {filters.brands?.length > 8 && (
+                                <button className="more-btn">+ {filters.brands.length - 8} more</button>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Price */}
+                    <div className="filter-section">
+                        <h3 className="filter-heading">PRICE</h3>
+                        <div className="price-range">
+                            <input type="range" min="0" max="100000" className="price-slider" />
+                            <div className="price-labels">
+                                <span>₹100</span>
+                                <span>₹10,100+</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Sort */}
+                    <div className="filter-section">
+                        <h3 className="filter-heading">SORT BY</h3>
+                        <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} className="sort-select">
+                            <option value="-createdAt">Newest First</option>
+                            <option value="price">Price: Low to High</option>
+                            <option value="-price">Price: High to Low</option>
+                            <option value="-rating">Highest Rated</option>
+                            <option value="-reviews">Most Popular</option>
+                        </select>
+                    </div>
+                </aside>
+
+                {/* Products Grid */}
+                <div className="products-section">
+                    {products.length === 0 && !loading ? (
+                        <div className="empty">
+                            <p>No products found</p>
+                            <button onClick={() => { setSelectedCategory(''); setSelectedBrand(''); }}>Clear Filters</button>
+                        </div>
+                    ) : (
+                        <>
+                            <div className="products-grid">
+                                {products.map(product => (
+                                    <ProductCard key={product._id} product={product} />
+                                ))}
+                            </div>
+
+                            {/* Pagination - Load More */}
+                            {products.length < total && (
+                                <div className="pagination-container" style={{ textAlign: 'center', margin: '40px 0' }}>
+                                    <button
+                                        className="load-more-btn"
+                                        onClick={() => setPage(prev => prev + 1)}
+                                        disabled={loading}
+                                        style={{
+                                            padding: '12px 30px',
+                                            backgroundColor: 'black',
+                                            color: 'white',
+                                            border: 'none',
+                                            borderRadius: '4px',
+                                            cursor: loading ? 'wait' : 'pointer',
+                                            fontFamily: 'Montserrat, sans-serif',
+                                            fontSize: '0.9rem',
+                                            letterSpacing: '1px',
+                                            transition: 'opacity 0.3s'
+                                        }}
+                                    >
+                                        {loading ? 'LOADING...' : 'LOAD MORE PRODUCTS'}
+                                    </button>
+                                    <p style={{ marginTop: '10px', color: '#666', fontSize: '0.9rem' }}>
+                                        Showing {products.length} of {total} products
+                                    </p>
+                                </div>
+                            )}
+                        </>
+                    )}
+                </div>
+            </div>
+        </div >
     );
 }
 
