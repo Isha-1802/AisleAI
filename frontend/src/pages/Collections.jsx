@@ -267,6 +267,27 @@ function ProductCard({ product }) {
     const [isLoading, setIsLoading] = useState(false);
     const [isAddingToCart, setIsAddingToCart] = useState(false);
 
+    // Check if product is already in favorites
+    useEffect(() => {
+        const checkFavoriteStatus = async () => {
+            const token = localStorage.getItem('token');
+            if (!token) return;
+
+            try {
+                const response = await axios.get(`${API_URL}/user/favorites`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                const favorites = response.data.favorites || [];
+                const isInFavorites = favorites.some(fav => fav._id === product._id);
+                setIsFavorite(isInFavorites);
+            } catch (error) {
+                // Silently fail - user might not be logged in
+            }
+        };
+
+        checkFavoriteStatus();
+    }, [product._id]);
+
     const handleAddToFavorites = async (e) => {
         e.stopPropagation();
 
@@ -319,108 +340,110 @@ function ProductCard({ product }) {
     };
 
     return (
-        <div className="product-card" style={{ position: 'relative' }}>
-            {/* Favorite Heart Button */}
-            <button
-                onClick={handleAddToFavorites}
-                disabled={isLoading || isFavorite}
-                style={{
-                    position: 'absolute',
-                    top: '12px',
-                    right: '12px',
-                    background: 'rgba(255, 255, 255, 0.9)',
-                    border: 'none',
-                    borderRadius: '50%',
-                    width: '36px',
-                    height: '36px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    cursor: isLoading || isFavorite ? 'default' : 'pointer',
-                    fontSize: '18px',
-                    transition: 'all 0.3s ease',
-                    zIndex: 10,
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-                }}
-                onMouseEnter={(e) => {
-                    if (!isFavorite && !isLoading) {
-                        e.target.style.transform = 'scale(1.1)';
-                        e.target.style.background = '#fff';
-                    }
-                }}
-                onMouseLeave={(e) => {
-                    e.target.style.transform = 'scale(1)';
-                    e.target.style.background = 'rgba(255, 255, 255, 0.9)';
-                }}
-                title={isFavorite ? 'Added to wishlist' : 'Add to wishlist'}
-            >
-                {isLoading ? '⏳' : isFavorite ? '❤️' : '🤍'}
-            </button>
+        <Link to={`/product/${product._id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+            <div className="product-card" style={{ position: 'relative' }}>
+                {/* Favorite Heart Button */}
+                <button
+                    onClick={handleAddToFavorites}
+                    disabled={isLoading || isFavorite}
+                    style={{
+                        position: 'absolute',
+                        top: '12px',
+                        right: '12px',
+                        background: 'rgba(255, 255, 255, 0.9)',
+                        border: 'none',
+                        borderRadius: '50%',
+                        width: '36px',
+                        height: '36px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: isLoading || isFavorite ? 'default' : 'pointer',
+                        fontSize: '18px',
+                        transition: 'all 0.3s ease',
+                        zIndex: 10,
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                    }}
+                    onMouseEnter={(e) => {
+                        if (!isFavorite && !isLoading) {
+                            e.target.style.transform = 'scale(1.1)';
+                            e.target.style.background = '#fff';
+                        }
+                    }}
+                    onMouseLeave={(e) => {
+                        e.target.style.transform = 'scale(1)';
+                        e.target.style.background = 'rgba(255, 255, 255, 0.9)';
+                    }}
+                    title={isFavorite ? 'Added to wishlist' : 'Add to wishlist'}
+                >
+                    {isLoading ? '⏳' : isFavorite ? '❤️' : '🤍'}
+                </button>
 
-            {/* Add to Cart Button */}
-            <button
-                onClick={handleAddToCart}
-                disabled={isAddingToCart}
-                style={{
-                    position: 'absolute',
-                    bottom: '12px',
-                    right: '12px',
-                    background: '#1A1A1A',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '4px',
-                    padding: '8px 16px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    cursor: isAddingToCart ? 'wait' : 'pointer',
-                    fontSize: '13px',
-                    fontWeight: '600',
-                    letterSpacing: '0.5px',
-                    transition: 'all 0.3s ease',
-                    zIndex: 10,
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-                    opacity: 0,
-                    transform: 'translateY(10px)'
-                }}
-                className="add-to-cart-btn"
-                onMouseEnter={(e) => {
-                    if (!isAddingToCart) {
-                        e.target.style.background = '#333';
-                    }
-                }}
-                onMouseLeave={(e) => {
-                    e.target.style.background = '#1A1A1A';
-                }}
-                title="Add to cart"
-            >
-                {isAddingToCart ? '⏳' : '🛍️'} {isAddingToCart ? 'ADDING...' : 'ADD TO BAG'}
-            </button>
+                {/* Add to Cart Button */}
+                <button
+                    onClick={handleAddToCart}
+                    disabled={isAddingToCart}
+                    style={{
+                        position: 'absolute',
+                        bottom: '12px',
+                        right: '12px',
+                        background: '#1A1A1A',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        padding: '8px 16px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        cursor: isAddingToCart ? 'wait' : 'pointer',
+                        fontSize: '13px',
+                        fontWeight: '600',
+                        letterSpacing: '0.5px',
+                        transition: 'all 0.3s ease',
+                        zIndex: 10,
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+                        opacity: 0,
+                        transform: 'translateY(10px)'
+                    }}
+                    className="add-to-cart-btn"
+                    onMouseEnter={(e) => {
+                        if (!isAddingToCart) {
+                            e.target.style.background = '#333';
+                        }
+                    }}
+                    onMouseLeave={(e) => {
+                        e.target.style.background = '#1A1A1A';
+                    }}
+                    title="Add to cart"
+                >
+                    {isAddingToCart ? '⏳' : '🛍️'} {isAddingToCart ? 'ADDING...' : 'ADD TO BAG'}
+                </button>
 
-            <div className="product-image" style={{ backgroundImage: `url(${product.images[0]})` }}>
-                {product.discount > 0 && (
-                    <span className="discount-badge">-{product.discount}%</span>
-                )}
-                {product.trending && (
-                    <span className="trending-badge">🔥 Trending</span>
-                )}
-            </div>
-            <div className="product-info">
-                <div className="product-brand">{product.brand}</div>
-                <h3 className="product-name">{product.name}</h3>
-                <div className="product-price">
-                    <span className="current-price">₹{product.price.toLocaleString()}</span>
-                    {product.originalPrice && (
-                        <span className="original-price">₹{product.originalPrice.toLocaleString()}</span>
+                <div className="product-image" style={{ backgroundImage: `url(${product.images[0]})` }}>
+                    {product.discount > 0 && (
+                        <span className="discount-badge">-{product.discount}%</span>
+                    )}
+                    {product.trending && (
+                        <span className="trending-badge">🔥 Trending</span>
                     )}
                 </div>
-                {product.rating > 0 && (
-                    <div className="product-rating">
-                        ⭐ {product.rating} ({product.reviews || 0})
+                <div className="product-info">
+                    <div className="product-brand">{product.brand}</div>
+                    <h3 className="product-name">{product.name}</h3>
+                    <div className="product-price">
+                        <span className="current-price">₹{product.price.toLocaleString()}</span>
+                        {product.originalPrice && (
+                            <span className="original-price">₹{product.originalPrice.toLocaleString()}</span>
+                        )}
                     </div>
-                )}
+                    {product.rating > 0 && (
+                        <div className="product-rating">
+                            ⭐ {product.rating} ({product.reviews || 0})
+                        </div>
+                    )}
+                </div>
             </div>
-        </div>
+        </Link>
     );
 }
 
