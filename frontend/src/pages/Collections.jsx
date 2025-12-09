@@ -130,8 +130,14 @@ function Collections() {
                             placeholder="Search (e.g. Maybelline)..."
                             value={searchQuery}
                             onChange={(e) => {
-                                setSearchQuery(e.target.value);
-                                setPage(1); // Reset to first page on search
+                                const val = e.target.value;
+                                setSearchQuery(val);
+                                setSearchParams(prev => {
+                                    if (val) prev.set('search', val);
+                                    else prev.delete('search');
+                                    return prev;
+                                });
+                                setPage(1);
                             }}
                             style={{
                                 width: '100%',
