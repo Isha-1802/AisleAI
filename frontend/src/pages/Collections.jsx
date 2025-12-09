@@ -109,6 +109,8 @@ function Collections() {
                 />
                 <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }}>🔍</span>
             </div>
+                </div >
+            </div >
 
         <div className="collections-container">
             {/* Filters Sidebar */}
@@ -248,6 +250,7 @@ function Collections() {
                 )}
             </div>
         </div>
+      </div >
     );
 }
 
