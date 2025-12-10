@@ -9,7 +9,7 @@ function AIStylist({ user: userProp }) {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
-    const [sidebarOpen, setSidebarOpen] = useState(true);
+    const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth > 768);
     const [conversations, setConversations] = useState([]);
     const [activeConversation, setActiveConversation] = useState(null);
     const [user, setUser] = useState(null);
@@ -72,6 +72,11 @@ function AIStylist({ user: userProp }) {
             });
             setMessages(response.data.messages);
             setActiveConversation(convId);
+
+            // Close sidebar on mobile after loading conversation
+            if (window.innerWidth <= 768) {
+                setSidebarOpen(false);
+            }
         } catch (error) {
             console.error('Failed to load conversation:', error);
         }
@@ -135,6 +140,11 @@ function AIStylist({ user: userProp }) {
         setMessages([]);
         setActiveConversation(null);
         console.log('Started new chat');
+
+        // Close sidebar on mobile after starting new chat
+        if (window.innerWidth <= 768) {
+            setSidebarOpen(false);
+        }
     };
 
     const deleteConversation = async (convId) => {
@@ -158,8 +168,17 @@ function AIStylist({ user: userProp }) {
 
     if (!user) return null;
 
+
     return (
         <div className="chatgpt-container">
+            {/* Mobile Overlay */}
+            {sidebarOpen && (
+                <div
+                    className="mobile-overlay"
+                    onClick={() => setSidebarOpen(false)}
+                />
+            )}
+
             {/* Sidebar */}
             <div className={`chatgpt-sidebar ${sidebarOpen ? 'open' : 'closed'}`}>
                 <div className="sidebar-header">
@@ -212,6 +231,7 @@ function AIStylist({ user: userProp }) {
                 >
                     {sidebarOpen ? '←' : '→'}
                 </button>
+
 
                 <div className="chat-messages">
                     {messages.length === 0 ? (
