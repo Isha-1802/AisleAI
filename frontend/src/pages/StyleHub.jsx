@@ -19,7 +19,7 @@ function StyleHub() {
             title: 'Color Analysis',
             icon: '🎨',
             description: 'Discover your perfect palette based on skin tone, hair, and eyes.',
-            image: 'https://images.unsplash.com/photo-1500917293891-ef795e70e1f6?w=800&q=80',
+            image: 'https://images.unsplash.com/photo-1500917293891-ef795e70e1f6?w=800&q=80&auto=format&fit=crop',
             questions: [
                 { id: 'gender', text: 'How do you identify?', options: ['Female', 'Male'] },
                 { id: 'undertone', text: 'Look at the veins on your wrist. What color are they?', options: ['Blue/Purple (Cool)', 'Green (Warm)', 'Blue & Green (Neutral)', 'Can\'t tell'] },
@@ -37,7 +37,7 @@ function StyleHub() {
             title: 'Body Shape Guide',
             icon: '👗',
             description: 'Find silhouettes that flatter your unique proportions.',
-            image: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=800&q=80',
+            image: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=800&q=80&auto=format&fit=crop',
             questions: [
                 { id: 'gender', text: 'How do you identify?', options: ['Female', 'Male'] },
                 { id: 'shoulders', text: 'How do your shoulders compare to your hips?', options: ['Shoulders are narrower', 'Shoulders are wider', 'About the same width'] },
@@ -55,7 +55,7 @@ function StyleHub() {
             title: 'Skincare For You',
             icon: '✨',
             description: 'Curated routine for your skin type and concerns.',
-            image: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=800&q=80',
+            image: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=800&q=80&auto=format&fit=crop',
             questions: [
                 { id: 'gender', text: 'How do you identify?', options: ['Female', 'Male'] },
                 { id: 'type', text: 'How does your skin feel 2 hours after washing?', options: ['Oily/Shiny all over', 'Tight and dry', 'Oily T-zone, dry cheeks', 'Normal/Comfortable'] },
@@ -73,7 +73,7 @@ function StyleHub() {
             title: 'Makeup For You',
             icon: '💄',
             description: 'Personalized makeup products and shades.',
-            image: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=800&q=80',
+            image: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=800&q=80&auto=format&fit=crop',
             questions: [
                 { id: 'gender', text: 'How do you identify?', options: ['Female', 'Male'] },
                 { id: 'finish', text: 'What foundation finish do you prefer?', options: ['Matte (No shine)', 'Dewy (Glowy)', 'Natural / Satin', 'No foundation, just concealer'] },
