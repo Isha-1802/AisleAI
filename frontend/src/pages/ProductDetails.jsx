@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
@@ -9,7 +9,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
 function ProductDetails() {
     const { id } = useParams();
-    const navigate = useNavigate();
+
     const { addToCart } = useCart();
     const { toggleWishlist, isInWishlist } = useWishlist();
     const [product, setProduct] = useState(null);
