@@ -73,7 +73,7 @@ function StyleHub() {
             title: 'Makeup For You',
             icon: '💄',
             description: 'Personalized makeup products and shades.',
-            image: 'https://images.unsplash.com/photo-1522335789203-abd652327216?w=800&q=80',
+            image: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=800&q=80',
             questions: [
                 { id: 'gender', text: 'How do you identify?', options: ['Female', 'Male'] },
                 { id: 'finish', text: 'What foundation finish do you prefer?', options: ['Matte (No shine)', 'Dewy (Glowy)', 'Natural / Satin', 'No foundation, just concealer'] },
