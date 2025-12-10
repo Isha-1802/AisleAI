@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import './Auth.css';
 
@@ -10,6 +10,7 @@ function Login({ setUser }) {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -21,7 +22,8 @@ function Login({ setUser }) {
             localStorage.setItem('token', response.data.token);
             localStorage.setItem('user', JSON.stringify(response.data.user));
             setUser(response.data.user);
-            navigate('/');
+            const from = location.state?.from?.pathname || '/';
+            navigate(from);
         } catch (err) {
             setError(err.response?.data?.error || 'Login failed');
         } finally {
@@ -68,7 +70,7 @@ function Login({ setUser }) {
                 </form>
 
                 <div className="auth-footer">
-                    Don't have an account? <Link to="/register">Register here</Link>
+                    Don't have an account? <Link to="/register" state={{ from: location.state?.from }}>Register here</Link>
                 </div>
             </div>
         </div>

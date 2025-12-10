@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import './StyleHub.css';
 
@@ -12,6 +12,24 @@ function StyleHub() {
     const [showResults, setShowResults] = useState(false);
     const [loading, setLoading] = useState(false);
     const [aiResult, setAiResult] = useState('');
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    useEffect(() => {
+        const pendingQuiz = localStorage.getItem('pendingQuiz');
+        if (pendingQuiz) {
+            try {
+                const { quizId, answers } = JSON.parse(pendingQuiz);
+                localStorage.removeItem('pendingQuiz');
+                setActiveQuiz(quizId);
+                setQuizAnswers(answers);
+                submitQuiz(quizId, answers);
+            } catch (e) {
+                console.error("Error restoring quiz", e);
+                localStorage.removeItem('pendingQuiz');
+            }
+        }
+    }, []);
 
     const quizzes = {
         color: {
@@ -110,6 +128,13 @@ function StyleHub() {
     };
 
     const submitQuiz = async (quizId, answers) => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            localStorage.setItem('pendingQuiz', JSON.stringify({ quizId, answers }));
+            navigate('/login', { state: { from: location } });
+            return;
+        }
+
         setLoading(true);
         try {
             const token = localStorage.getItem('token');
