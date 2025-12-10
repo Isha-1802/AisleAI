@@ -3,14 +3,18 @@
 .chatgpt-container {
     display: flex;
     height: calc(100vh - 80px);
-    width: 100vw;
+    width: 100%;
+    max-width: 100%;
     background: #343541;
     color: #ececf1;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
     position: fixed;
     top: 80px;
     left: 0;
+    right: 0;
     z-index: 999;
+    overflow: hidden;
+    box-sizing: border-box;
 }
 
 /* Sidebar */
@@ -186,6 +190,8 @@
     flex-direction: column;
     position: relative;
     background: #343541;
+    overflow: hidden;
+    min-width: 0;
 }
 
 .sidebar-toggle {
@@ -214,7 +220,10 @@
 .chat-messages {
     flex: 1;
     overflow-y: auto;
+    overflow-x: hidden;
     padding: 80px 0 20px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 /* Empty State */
@@ -223,6 +232,8 @@
     margin: 0 auto;
     padding: 40px 20px;
     text-align: center;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .empty-state h1 {
@@ -230,6 +241,7 @@
     font-weight: 600;
     margin-bottom: 16px;
     background: linear-gradient(135deg, #D4AF37, #C9A961);
+    background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
@@ -246,6 +258,8 @@
     gap: 12px;
     max-width: 800px;
     margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .suggestions button {
@@ -258,6 +272,8 @@
     text-align: left;
     font-size: 14px;
     transition: all 0.2s;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .suggestions button:hover {
@@ -271,6 +287,8 @@
     padding: 24px;
     max-width: 800px;
     margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .message.user {
@@ -309,6 +327,9 @@
     line-height: 1.6;
     white-space: pre-wrap;
     word-wrap: break-word;
+    overflow-wrap: break-word;
+    min-width: 0;
+    max-width: 100%;
 }
 
 /* Typing Indicator */
@@ -354,6 +375,8 @@
     padding: 20px;
     background: #343541;
     border-top: 1px solid #4d4d4f;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .chat-input-form {
@@ -367,6 +390,8 @@
     align-items: flex-end;
     padding: 12px;
     gap: 8px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .chat-input-form textarea {
@@ -380,6 +405,8 @@
     max-height: 200px;
     font-family: inherit;
     line-height: 1.5;
+    min-width: 0;
+    width: 100%;
 }
 
 .chat-input-form textarea::placeholder {
@@ -440,19 +467,287 @@
     background: #5e5e60;
 }
 
+/* Mobile Overlay */
+.mobile-overlay {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .mobile-overlay {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        backdrop-filter: blur(2px);
+    }
+}
+
 /* Mobile Responsive */
 @media (max-width: 768px) {
+    .chatgpt-container {
+        height: calc(100vh - 60px);
+        top: 60px;
+    }
+
+    /* Sidebar - Full screen overlay on mobile */
     .chatgpt-sidebar {
-        position: absolute;
+        position: fixed;
+        width: 85%;
+        max-width: 300px;
         height: 100%;
-        z-index: 100;
+        z-index: 1000;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
     }
 
     .chatgpt-sidebar.closed {
         transform: translateX(-100%);
+        width: 0;
     }
 
     .sidebar-toggle {
         display: flex;
+        width: 44px;
+        height: 44px;
+        font-size: 20px;
+        top: 16px;
+        left: 16px;
+    }
+
+    /* Empty State - Mobile optimized */
+    .empty-state {
+        padding: 20px 16px;
+    }
+
+    .empty-state h1 {
+        font-size: 24px;
+        margin-bottom: 12px;
+    }
+
+    .empty-state p {
+        font-size: 14px;
+        margin-bottom: 24px;
+    }
+
+    .suggestions {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        padding: 0;
+        max-width: 100%;
+    }
+
+    .suggestions button {
+        padding: 14px 12px;
+        font-size: 13px;
+    }
+
+    /* Messages - Mobile optimized */
+    .chat-messages {
+        padding: 70px 0 16px;
+    }
+
+    .message {
+        padding: 16px 12px;
+        gap: 12px;
+    }
+
+    .message-avatar {
+        width: 28px;
+        height: 28px;
+        font-size: 12px;
+    }
+
+    .message.assistant .message-avatar {
+        font-size: 16px;
+    }
+
+    .message-content {
+        font-size: 15px;
+        line-height: 1.5;
+    }
+
+    /* Input Area - Mobile optimized */
+    .chat-input-container {
+        padding: 12px;
+        padding-bottom: max(12px, env(safe-area-inset-bottom));
+    }
+
+    .chat-input-form {
+        padding: 10px;
+        border-radius: 10px;
+    }
+
+    .chat-input-form textarea {
+        font-size: 16px;
+        /* Prevents zoom on iOS */
+        min-height: 44px;
+        /* Touch-friendly */
+    }
+
+    .chat-input-form button {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+    }
+
+    .input-footer {
+        font-size: 11px;
+        margin-top: 8px;
+        padding: 0 4px;
+    }
+
+    /* Sidebar - Mobile optimized */
+    .sidebar-header {
+        padding: 16px 12px;
+    }
+
+    .new-chat-btn {
+        padding: 14px 12px;
+        font-size: 15px;
+        min-height: 44px;
+    }
+
+    .conversations-list {
+        padding: 8px 4px;
+    }
+
+    .conversation-item {
+        padding: 14px 12px;
+        margin-bottom: 6px;
+        min-height: 56px;
+    }
+
+    .conv-icon {
+        font-size: 18px;
+    }
+
+    .conv-title {
+        font-size: 15px;
+    }
+
+    .conv-date {
+        font-size: 11px;
+    }
+
+    .conv-delete {
+        opacity: 1;
+        /* Always visible on mobile */
+        right: 12px;
+        font-size: 16px;
+        padding: 8px;
+        min-width: 32px;
+        min-height: 32px;
+    }
+
+    .sidebar-footer {
+        padding: 12px;
+    }
+
+    .user-info {
+        padding: 10px 8px;
+    }
+
+    .user-avatar {
+        width: 36px;
+        height: 36px;
+        font-size: 15px;
+    }
+
+    .user-name {
+        font-size: 15px;
+    }
+
+    .user-email {
+        font-size: 11px;
+    }
+}
+
+/* Small phones */
+@media (max-width: 375px) {
+    .chatgpt-container {
+        height: calc(100vh - 56px);
+        top: 56px;
+    }
+
+    .empty-state h1 {
+        font-size: 20px;
+    }
+
+    .empty-state p {
+        font-size: 13px;
+    }
+
+    .message {
+        padding: 12px 8px;
+        gap: 10px;
+    }
+
+    .message-content {
+        font-size: 14px;
+    }
+
+    .sidebar-toggle {
+        width: 40px;
+        height: 40px;
+        top: 12px;
+        left: 12px;
+    }
+
+    .chat-input-container {
+        padding: 10px 8px;
+        padding-bottom: max(10px, env(safe-area-inset-bottom));
+    }
+
+    .suggestions button {
+        padding: 12px 10px;
+        font-size: 12px;
+    }
+}
+
+/* Landscape mode on phones */
+@media (max-width: 768px) and (orientation: landscape) {
+    .chatgpt-container {
+        height: 100vh;
+        top: 0;
+    }
+
+    .chat-messages {
+        padding: 60px 0 12px;
+    }
+
+    .empty-state {
+        padding: 16px 12px;
+    }
+
+    .empty-state h1 {
+        font-size: 20px;
+        margin-bottom: 8px;
+    }
+
+    .empty-state p {
+        font-size: 13px;
+        margin-bottom: 16px;
+    }
+
+    .suggestions {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Tablet adjustments */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .chatgpt-sidebar {
+        width: 240px;
+    }
+
+    .empty-state h1 {
+        font-size: 28px;
+    }
+
+    .suggestions {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
