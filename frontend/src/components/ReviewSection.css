@@ -1,0 +1,130 @@
+.review-section {
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid #eee;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.section-title {
+    font-size: 1.5rem;
+    margin-bottom: 30px;
+    font-weight: 600;
+}
+
+.review-form-container {
+    background: #f9f9f9;
+    padding: 24px;
+    border-radius: 8px;
+    margin-bottom: 40px;
+}
+
+.review-form-container h4 {
+    margin-bottom: 16px;
+    font-size: 1.1rem;
+}
+
+.rating-input {
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.review-form-container textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 16px;
+    font-family: inherit;
+    resize: vertical;
+}
+
+.form-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.review-form-container button {
+    padding: 10px 24px;
+    background: #1A1A1A;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.review-form-container button.cancel-btn {
+    background: #ccc;
+    color: #333;
+}
+
+.login-prompt a {
+    color: #1A1A1A;
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+/* Review List */
+.reviews-list {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.review-card {
+    padding: 20px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    background: white;
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.reviewer-name {
+    font-weight: bold;
+    color: #1A1A1A;
+}
+
+.review-rating {
+    color: #FFD700;
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+}
+
+.review-comment {
+    line-height: 1.6;
+    color: #444;
+}
+
+.review-actions {
+    margin-top: 16px;
+    display: flex;
+    gap: 16px;
+}
+
+.review-actions button {
+    background: none;
+    border: none;
+    font-size: 0.85rem;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 0;
+}
+
+.edit-btn {
+    color: #666;
+}
+
+.delete-btn {
+    color: #ff3f6c;
+}

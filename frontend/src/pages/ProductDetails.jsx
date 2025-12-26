@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
+import ReviewSection from '../components/ReviewSection';
 import './Collections.css'; // Reusing collections CSS for consistent styling
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
@@ -152,7 +153,7 @@ function ProductDetails() {
                         </button>
                     </div>
 
-                    <div style={{ borderTop: '1px solid #eee', paddingTop: '30px' }}>
+                    <div style={{ borderTop: '1px solid #eee', paddingTop: '30px', paddingBottom: '30px' }}>
                         <h3 style={{ fontFamily: 'Montserrat', fontSize: '0.9rem', fontWeight: 'bold', marginBottom: '20px' }}>PRODUCT DETAILS</h3>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px', fontSize: '0.9rem', color: '#444' }}>
                             <div>Category: {product.category}</div>
@@ -161,6 +162,8 @@ function ProductDetails() {
                             <div>Rating: {product.rating} ⭐</div>
                         </div>
                     </div>
+
+                    <ReviewSection productId={product._id} />
                 </div>
             </div>
         </div>

@@ -36,6 +36,7 @@ app.use('/api/ai', require('./routes/ai'));
 app.use('/api/chat', require('./routes/chat'));
 app.use('/api/user', require('./routes/user'));
 app.use('/api/style-hub', require('./routes/styleHub'));
+app.use('/api/reviews', require('./routes/reviews'));
 
 // Health Check
 app.get('/api/health', (req, res) => {
