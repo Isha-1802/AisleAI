@@ -110,19 +110,13 @@ router.post('/quiz-result', auth, async (req, res) => {
             1. **THE MORNING RITUAL**: Focused on protection and hydration.
             2. **THE NIGHT RITUAL**: Focused on repair and treatment.
             
-            For EACH step in both rituals (Cleanser, Serum, etc.), you MUST provide options across three price points:
-            - **[AFFORDABLE]**: (e.g., The Ordinary, Cetaphil, Minimalist)
-            - **[MID-RANGE]**: (e.g., COSRX, Paula's Choice, Kiehl's)
-            - **[LUXURY]**: (e.g., SK-II, La Mer, Estée Lauder)
+            For EACH step in both rituals (Cleanser, Serum, etc.), you MUST provide exactly one specific product recommendation that fits the user's requested budget (${answers.budget}).
             
             Ensure recommendations are gender-aware (${answers.gender}).`,
 
             makeup: `You are a celebrity makeup artist. Based on the user's facial features, preferences (finish, coverage), and budget preference (${answers.budget || 'Any'}), recommend a personalized makeup kit. 
             
-            For EACH item (Foundation, Blush, etc.), you MUST provide options across three price points:
-            - **[AFFORDABLE]**: (e.g., Maybelline, NYX, e.l.f.)
-            - **[MID-RANGE]**: (e.g., MAC, Clinique, Fenty)
-            - **[LUXURY]**: (e.g., Chanel, Dior, Armani Beauty)
+            For EACH item (Foundation, Blush, etc.), you MUST provide exactly one specific product recommendation that fits the user's requested budget (${answers.budget}).
             
             Ensure shade and product recommendations are gender-aware (${answers.gender}).`
         };
@@ -159,11 +153,10 @@ router.post('/quiz-result', auth, async (req, res) => {
                     
                     ###
                     **THE RECOMMENDATIONS**
+                    [ONLY show items for the user's selected budget: ${answers.budget}]
                     [For each category of product/outfit, use this exact format:]
                     **Category Name**
-                    - [AFFORDABLE]: Brand Name & Product Name
-                    - [MID-RANGE]: Brand Name & Product Name
-                    - [LUXURY]: Brand Name & Product Name
+                    - Brand Name & Product Name
                     [If skincare, do this for both Morning and Night sections]
                     
                     ###

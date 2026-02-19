@@ -225,19 +225,6 @@ function StyleHub() {
                                 The Curator's Edit
                             </h3>
 
-                            {/* Budget Filtering Tabs */}
-                            <div className="budget-tabs">
-                                {['AFFORDABLE', 'MID-RANGE', 'LUXURY'].map((tier) => (
-                                    <button
-                                        key={tier}
-                                        className={`budget-tab ${budgetFilter === tier ? 'active' : ''}`}
-                                        onClick={() => setBudgetFilter(tier)}
-                                    >
-                                        {tier}
-                                    </button>
-                                ))}
-                            </div>
-
                             <div className="ai-results-grid">
                                 {aiResult.split('###').map((section, index) => {
                                     if (!section.trim()) return null;
@@ -266,49 +253,36 @@ function StyleHub() {
                                         });
                                     };
 
-                                    // Filter lines if it's the recommendations section
-                                    let contentLines = lines.slice(contentStartIdx);
                                     if (isRecommendations) {
-                                        const filteredLines = [];
-                                        let currentCategory = null;
+                                        const recommendationLines = lines.slice(contentStartIdx);
+                                        return (
+                                            <div key={index} className="ai-result-card recommendations-card" style={{ gridColumn: '1 / -1' }}>
+                                                <span className="ai-card-icon">{icons[1]}</span>
+                                                <h4 className="ai-card-title">{title}</h4>
+                                                <div className="ai-results-subgrid">
+                                                    {recommendationLines.map((line, i) => {
+                                                        const trimmed = line.trim();
+                                                        if (!trimmed) return null;
 
-                                        contentLines.forEach(line => {
-                                            const trimmed = line.trim();
-                                            if (!trimmed) return;
+                                                        // Heading for category or ritual
+                                                        if (trimmed.startsWith('**') && trimmed.endsWith('**')) {
+                                                            return <h5 key={i} className="ai-item-category">{renderText(trimmed)}</h5>;
+                                                        }
 
-                                            // Detect category headings (bold lines without bullet points)
-                                            if (trimmed.startsWith('**') && trimmed.endsWith('**') && !trimmed.includes(':')) {
-                                                currentCategory = trimmed;
-                                                filteredLines.push({ type: 'category', text: trimmed });
-                                            } else if (trimmed.includes(`[${budgetFilter}]`)) {
-                                                filteredLines.push({ type: 'item', text: trimmed.replace(`[${budgetFilter}]:`, '').replace(`[${budgetFilter}]`, '').trim() });
-                                            } else if (trimmed.toUpperCase().includes('RITUAL') || trimmed.toUpperCase().includes('ROUTINE')) {
-                                                filteredLines.push({ type: 'ritual', text: trimmed });
-                                            }
-                                        });
-
-                                        // If filtered list is empty but AI provided text, show original as fallback
-                                        if (filteredLines.length > 0) {
-                                            return (
-                                                <div key={index} className="ai-result-card recommendations-card" style={{ gridColumn: '1 / -1' }}>
-                                                    <span className="ai-card-icon">{icons[1]}</span>
-                                                    <h4 className="ai-card-title">{title}</h4>
-                                                    <div className="ai-results-subgrid">
-                                                        {filteredLines.map((item, i) => {
-                                                            if (item.type === 'category' || item.type === 'ritual') {
-                                                                return <h5 key={i} className="ai-item-category">{renderText(item.text)}</h5>;
-                                                            }
+                                                        // List items
+                                                        if (trimmed.startsWith('-') || trimmed.startsWith('•')) {
                                                             return (
                                                                 <div key={i} className="ai-list-item">
                                                                     <span className="ai-bullet">✦</span>
-                                                                    <span>{renderText(item.text)}</span>
+                                                                    <span>{renderText(trimmed.replace(/^[-•]\s*/, ''))}</span>
                                                                 </div>
                                                             );
-                                                        })}
-                                                    </div>
+                                                        }
+                                                        return <p key={i}>{renderText(trimmed)}</p>;
+                                                    })}
                                                 </div>
-                                            );
-                                        }
+                                            </div>
+                                        );
                                     }
 
                                     return (
@@ -316,14 +290,14 @@ function StyleHub() {
                                             <span className="ai-card-icon">{icons[index % 3]}</span>
                                             <h4 className="ai-card-title">{title}</h4>
                                             <div className="ai-card-body">
-                                                {contentLines.map((line, i) => {
-                                                    if (!line.trim()) return null;
-                                                    if (line.trim().startsWith('•') || line.trim().startsWith('-')) {
-                                                        const cleanLine = line.replace(/^[•-]\s*/, '');
+                                                {lines.slice(contentStartIdx).map((line, i) => {
+                                                    const trimmed = line.trim();
+                                                    if (!trimmed) return null;
+                                                    if (trimmed.startsWith('•') || trimmed.startsWith('-')) {
                                                         return (
                                                             <div key={i} className="ai-list-item">
                                                                 <span className="ai-bullet">›</span>
-                                                                <span>{renderText(cleanLine)}</span>
+                                                                <span>{renderText(trimmed.replace(/^[-•]\s*/, ''))}</span>
                                                             </div>
                                                         );
                                                     }
