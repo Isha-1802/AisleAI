@@ -152,7 +152,11 @@ router.post('/quiz-result', auth, async (req, res) => {
                     - Detailed Answers: ${JSON.stringify(answers)}
                     
                     Provide a luxury-tier personal analysis. 
-                    If identification is 'Male', ensure all recommendations (clothing, skincare, makeup) are tailored to men. If 'Female', tailor to women.
+                    Tailor all advice strictly to the user's gender identification (${answers.gender}).
+                    
+                    DOMAIN RESTRICTION:
+                    - If this is a COLOR or BODY shape quiz, ONLY recommend clothing, silhouettes, and accessories. DO NOT mention skincare, makeup, or beauty products.
+                    - If this is a SKINCARE or MAKEUP quiz, ONLY recommend beauty/skincare products. DO NOT mention clothing.
                     
                     FORMATTING RULES:
                     Use "###" to separate these 3 main sections:
@@ -165,9 +169,9 @@ router.post('/quiz-result', auth, async (req, res) => {
                     **THE RECOMMENDATIONS**
                     [ONLY show REAL products for the user's selected budget: ${answers.budget}]
                     [For each category, list one specific, real-world product.]
-                    **Category Name**
+                    **Category**
                     - Brand Name & REAL Product Name
-                    [If skincare, do this for both Morning and Night sections]
+                    [If skincare, ALWAYS provide separate Morning and Night sections here]
                     
                     ###
                     **THE STRATEGY**
