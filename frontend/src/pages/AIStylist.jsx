@@ -85,28 +85,83 @@ function AIStylist() {
 
         try {
             const token = localStorage.getItem('token');
-            console.log('Sending message to:', `${API_URL}/chat/message`);
+            console.log('Sending message (streaming):', userMessage);
 
-            const response = await axios.post(
-                `${API_URL}/chat/message`,
-                {
+            // Add an empty assistant message to populate during stream
+            setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
+
+            const response = await fetch(`${API_URL}/chat/message`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
                     message: userMessage,
                     conversationId: activeConversation
-                },
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
+                })
+            });
 
-            console.log('AI Response received');
-            setMessages(prev => [...prev, { role: 'assistant', content: response.data.message }]);
+            if (!response.ok) throw new Error('Failed to connect to AI');
 
-            if (!activeConversation && response.data.conversationId) {
-                setActiveConversation(response.data.conversationId);
-                loadConversations();
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let fullContent = '';
+            let leftover = '';
+
+            while (true) {
+                const { value, done } = await reader.read();
+                if (done) break;
+
+                const chunk = decoder.decode(value, { stream: true });
+                const lines = (leftover + chunk).split('\n');
+                leftover = lines.pop() || '';
+
+                for (const line of lines) {
+                    const trimmedLine = line.trim();
+                    if (trimmedLine.startsWith('data: ')) {
+                        try {
+                            const data = JSON.parse(trimmedLine.slice(6));
+
+                            if (data.error) throw new Error(data.error);
+
+                            if (data.content) {
+                                fullContent += data.content;
+                                setMessages(prev => {
+                                    const newMessages = [...prev];
+                                    if (newMessages.length > 0) {
+                                        newMessages[newMessages.length - 1].content = fullContent;
+                                    }
+                                    return newMessages;
+                                });
+                            }
+
+                            if (data.done) {
+                                if (!activeConversation && data.conversationId) {
+                                    setActiveConversation(data.conversationId);
+                                    loadConversations();
+                                }
+                            }
+                        } catch (e) {
+                            console.error('Error parsing stream chunk:', e, 'Line:', trimmedLine);
+                        }
+                    }
+                }
             }
         } catch (error) {
             console.error('❌ Failed to send message:', error);
-            const errorMessage = error.response?.data?.error || 'Sorry, I couldn\'t process your request. Please try again.';
-            setMessages(prev => [...prev, { role: 'assistant', content: errorMessage }]);
+            const errorMessage = error.message || 'Sorry, I couldn\'t process your request. Please try again.';
+
+            setMessages(prev => {
+                const newMessages = [...prev];
+                // If we added a placeholder, update it, otherwise add new
+                if (newMessages[newMessages.length - 1]?.role === 'assistant' && !newMessages[newMessages.length - 1]?.content) {
+                    newMessages[newMessages.length - 1].content = errorMessage;
+                } else {
+                    newMessages.push({ role: 'assistant', content: errorMessage });
+                }
+                return newMessages;
+            });
         } finally {
             setLoading(false);
         }

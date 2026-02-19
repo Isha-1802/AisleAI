@@ -109,14 +109,25 @@ exports.chat = async (req, res) => {
         let aiResponse = '';
 
         try {
-            console.log(`🚀 DEBUG: Processing chat message: "${message}"`);
+            console.log(`🚀 DEBUG: Starting real-time stream for user message: "${message}"`);
+
+            if (!groq || !process.env.GROQ_API_KEY) {
+                console.error('❌ GROQ_API_KEY is missing from environment variables');
+                throw new Error('Groq API key not configured');
+            }
 
             const user = await User.findById(req.userId);
             const userGender = user?.preferences?.gender || 'not specified';
             const products = await Product.find().limit(5);
             const productContext = products.map(p => `${p.name}`).join(', ');
 
-            const completion = await groq.chat.completions.create({
+            // Set headers for SSE
+            res.setHeader('Content-Type', 'text/event-stream');
+            res.setHeader('Cache-Control', 'no-cache');
+            res.setHeader('Connection', 'keep-alive');
+            res.setHeader('X-Accel-Buffering', 'no'); // Disable proxy buffering for real-time
+
+            const stream = await groq.chat.completions.create({
                 messages: [
                     {
                         role: 'system',
@@ -125,10 +136,12 @@ exports.chat = async (req, res) => {
                         BOUTIQUE PIECES: ${productContext}
                         
                         STRICT RULES:
-                        1. RECOMMEND REAL PRODUCTS from global brands (Korean, Western, Modern Indian).
-                        2. Match the specific occasion.
-                        3. Provide Affordable, Mid-range, and Luxury options.
-                        4. Tone: Sophisticated and Sharp.`
+                        1. GLOBAL EXPERTISE: You are an expert in world fashion (Korean, Western, Modern Indian, etc.).
+                        2. OCCASION PRECISION: Only suggest outfits that strictly fit the specific occasion mentioned.
+                        3. BRAND DIVERSITY: Recommend REAL products from global brands.
+                        4. REAL-WORLD DATA: Every recommendation must be a real, existing product.
+                        5. BUDGETING: Provide choices for **Affordable**, **Mid-range**, and **Luxury** tiers.
+                        6. TONE: Sophisticated, Modern, and Sharp.`
                     },
                     ...conversation.messages.slice(-10).map(msg => ({
                         role: msg.role,
@@ -138,11 +151,18 @@ exports.chat = async (req, res) => {
                 model: 'llama-3.3-70b-versatile',
                 temperature: 0.7,
                 max_tokens: 1000,
+                stream: true,
             });
 
-            aiResponse = completion.choices[0].message.content;
-            console.log('✅ AI Response generated successfully');
+            for await (const chunk of stream) {
+                const content = chunk.choices[0]?.delta?.content || '';
+                if (content) {
+                    aiResponse += content;
+                    res.write(`data: ${JSON.stringify({ content })}\n\n`);
+                }
+            }
 
+            // Save the full response to database
             conversation.messages.push({
                 role: 'assistant',
                 content: aiResponse,
@@ -150,14 +170,14 @@ exports.chat = async (req, res) => {
             conversation.updatedAt = new Date();
             await conversation.save();
 
-            res.json({
-                message: aiResponse,
-                conversationId: conversation._id
-            });
+            // Send done signal
+            res.write(`data: ${JSON.stringify({ done: true, conversationId: conversation._id })}\n\n`);
+            res.end();
 
         } catch (error) {
-            console.error('❌ AI error:', error.message);
-            res.status(500).json({ error: `AI Error: ${error.message}` });
+            console.error('❌ Streaming error:', error.message);
+            res.write(`data: ${JSON.stringify({ error: error.message })}\n\n`);
+            res.end();
         }
     } catch (error) {
         console.error('Chat error:', error);
