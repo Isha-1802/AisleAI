@@ -134,10 +134,12 @@ router.post('/quiz-result', auth, async (req, res) => {
                     role: 'system',
                     content: `${systemPrompt} 
                     
-                    STRICT ACCURACY RULES:
-                    1. ONLY recommend real-world products from established brands (e.g., Charlotte Tilbury, The Ordinary, Zara, Sabyasachi, etc.) that actually exist in the real world.
-                    2. DO NOT invent or fabricate product names. 
-                    3. Ensure every product is a REAL item currently sold by that brand.`
+                    STRICT GLOBAL ACCURACY RULES:
+                    1. BE A GLOBAL STYLIST: Your knowledge spans across Seoul (Korean aesthetic), Paris, New York, and Mumbai. Use this breadth to suit the user's data.
+                    2. OCCASION MATCHING: Recommendations MUST be precisely tailored to the user's intent. Never default to a generic "Sabyasachi Gown" if it doesn't fit.
+                    3. BRAND DIVERSITY: Use any real-world brand that fits (e.g., Ader Error, Jacquemus, Uniqlo, Raw Mango, Reformation, etc.).
+                    4. REAL PRODUCTS ONLY: Every product MUST be a real, buyable item in the real world.
+                    5. NO FABRICATION: Do not invent names or brands.`
                 },
                 {
                     role: 'user',

@@ -106,27 +106,25 @@ exports.chat = async (req, res) => {
             content: message,
         });
 
-        let aiResponse;
+        let aiResponse = '';
 
         try {
-            console.log('DEBUG: Processing chat message');
-            console.log('DEBUG: Groq available:', !!groq);
-            console.log('DEBUG: API Key exists:', !!process.env.GROQ_API_KEY);
-
+            console.log(`🚀 DEBUG: Starting real-time stream for user message: "${message}"`);
             if (!groq || !process.env.GROQ_API_KEY) {
-                console.error('DEBUG: Groq API key missing');
                 throw new Error('Groq API key not configured');
             }
 
-            // Get user data for gender if available
             const user = await User.findById(req.userId);
             const userGender = user?.preferences?.gender || 'not specified';
-
-            // Get recent products for context
             const products = await Product.find().limit(10);
             const productContext = products.map(p => `${p.name} (${p.category}) by ${p.brand} - ₹${p.price}`).join(', ');
 
-            const completion = await groq.chat.completions.create({
+            // Set headers for SSE
+            res.setHeader('Content-Type', 'text/event-stream');
+            res.setHeader('Cache-Control', 'no-cache');
+            res.setHeader('Connection', 'keep-alive');
+
+            const stream = await groq.chat.completions.create({
                 messages: [
                     {
                         role: 'system',
@@ -137,14 +135,13 @@ exports.chat = async (req, res) => {
                         - Aesthetic: Sophisticated, High-End, Personalized.
                         
                         YOUR OBJECTIVE:
-                        1. Provide deep fashion expertise tailored to their gender (${userGender}). 
-                        2. INTEGRATE OUR CATALOG: We have curated pieces in our store: ${productContext}.
-                        3. REAL-WORLD DATA: When recommending items outside our catalog, you MUST ONLY use real, existing products and brands that exist in the real world.
-                           - NO FABRICATED OR INVENTED PRODUCTS.
-                           - Use your real-world knowledge of brands like Zara, H&M, Sabyasachi, Estee Lauder, etc.
-                        4. BUDGETING: Provide choices for **Affordable**, **Mid-range**, and **Luxury** tiers.
-                        5. MORNING/NIGHT: If asked about skincare/beauty, provide separate Morning and Night routines.
-                        6. TONE: Sophisticated, Minimalist, and Encouraging. Use "WE" when referring to AisleAI.`
+                        1. GLOBAL EXPERTISE: You are an expert in world fashion—from Paris High Fashion and Korean Street Style to modern Indian Couture and Minimalist Western trends.
+                        2. OCCASION PRECISION: Only suggest outfits that strictly fit the specific occasion mentioned. DO NOT repeat generic gowns for everything.
+                        3. BRAND DIVERSITY: Recommend REAL products from any relevant global brand (e.g., Jacquemus, Gentle Monster, Ader Error, Masaba, Zara, Cos, etc.).
+                        4. OUR BOUTIQUE: You may *subtly* mention items from our curated selection if they are a perfect fit, but never prioritize them over the user's specific style need: ${productContext}.
+                        5. REAL-WORLD DATA: Every single recommendation must be a real, existing product that the user can buy in the real world.
+                        6. BUDGETING: Provide choices for **Affordable**, **Mid-range**, and **Luxury** tiers.
+                        7. TONE: Sophisticated, Modern, and Sharp.`
                     },
                     ...conversation.messages.slice(-10).map(msg => ({
                         role: msg.role,
@@ -153,32 +150,40 @@ exports.chat = async (req, res) => {
                 ],
                 model: 'llama-3.3-70b-versatile',
                 temperature: 0.7,
-                max_tokens: 800,
+                max_tokens: 1000,
+                stream: true,
             });
 
-            aiResponse = completion.choices[0].message.content;
-            console.log('✅ Groq AI response generated');
+            for await (const chunk of stream) {
+                const content = chunk.choices[0]?.delta?.content || '';
+                if (content) {
+                    aiResponse += content;
+                    res.write(`data: ${JSON.stringify({ content })}\n\n`);
+                }
+            }
+
+            // After stream ends, save the full response to database
+            conversation.messages.push({
+                role: 'assistant',
+                content: aiResponse,
+            });
+            conversation.updatedAt = new Date();
+            await conversation.save();
+
+            res.write(`data: ${JSON.stringify({ done: true, conversationId: conversation._id })}\n\n`);
+            res.end();
+
         } catch (error) {
-            console.error('❌ Groq AI error:', error.message);
-            aiResponse = `HEARTBEAT ERROR: ${error.message}. Please check your Groq API status or model availability. Defaulting to manual assistant mode: Hi! I'm your AI fashion stylist. How can I help you today?`;
+            console.error('❌ Streaming AI error:', error.message);
+            const errorMsg = `ERROR: ${error.message}`;
+            res.write(`data: ${JSON.stringify({ error: errorMsg })}\n\n`);
+            res.end();
         }
-
-        // Add AI response
-        conversation.messages.push({
-            role: 'assistant',
-            content: aiResponse,
-        });
-
-        conversation.updatedAt = new Date();
-        await conversation.save();
-
-        res.json({
-            message: aiResponse,
-            conversationId: conversation._id
-        });
     } catch (error) {
         console.error('Chat error:', error);
-        res.status(500).json({ error: 'Failed to process message' });
+        if (!res.headersSent) {
+            res.status(500).json({ error: 'Failed to process message' });
+        }
     }
 };
 

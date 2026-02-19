@@ -85,40 +85,82 @@ function AIStylist() {
 
         try {
             const token = localStorage.getItem('token');
-            console.log('Sending message:', userMessage);
-            console.log('Active conversation:', activeConversation);
+            console.log('Sending message (streaming):', userMessage);
 
-            const response = await axios.post(
-                `${API_URL}/chat/message`,
-                {
+            // Add an empty assistant message to populate during stream
+            setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
+
+            const response = await fetch(`${API_URL}/chat/message`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
                     message: userMessage,
                     conversationId: activeConversation
-                },
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
+                })
+            });
 
-            console.log('Response received:', response.data);
-            setMessages(prev => [...prev, { role: 'assistant', content: response.data.message }]);
+            if (!response.ok) throw new Error('Failed to connect to AI');
 
-            // Update active conversation ID if it's a new chat
-            if (!activeConversation && response.data.conversationId) {
-                setActiveConversation(response.data.conversationId);
-                // Reload conversations to show the new one
-                loadConversations();
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let fullContent = '';
+            let leftover = '';
+
+            while (true) {
+                const { value, done } = await reader.read();
+                if (done) break;
+
+                const chunk = decoder.decode(value, { stream: true });
+                const lines = (leftover + chunk).split('\n');
+                leftover = lines.pop() || '';
+
+                for (const line of lines) {
+                    const trimmedLine = line.trim();
+                    if (trimmedLine.startsWith('data: ')) {
+                        try {
+                            const data = JSON.parse(trimmedLine.slice(6));
+                            if (data.error) throw new Error(data.error);
+
+                            if (data.content) {
+                                fullContent += data.content;
+                                setMessages(prev => {
+                                    const newMessages = [...prev];
+                                    if (newMessages.length > 0) {
+                                        newMessages[newMessages.length - 1].content = fullContent;
+                                    }
+                                    return newMessages;
+                                });
+                            }
+
+                            if (data.done) {
+                                if (!activeConversation && data.conversationId) {
+                                    setActiveConversation(data.conversationId);
+                                    loadConversations();
+                                }
+                            }
+                        } catch (e) {
+                            console.error('Error parsing stream chunk:', e, 'Line:', trimmedLine);
+                        }
+                    }
+                }
             }
         } catch (error) {
             console.error('❌ Failed to send message:', error);
-            console.error('Error response:', error.response?.data);
-            console.error('Error status:', error.response?.status);
+            const errorMessage = error.message || 'Sorry, I couldn\'t process your request. Please try again.';
 
-            const errorMessage = error.response?.status === 401
-                ? 'Please log in to use the AI Stylist.'
-                : error.response?.data?.error || 'Sorry, I couldn\'t process your request. Please try again.';
-
-            setMessages(prev => [...prev, {
-                role: 'assistant',
-                content: errorMessage
-            }]);
+            setMessages(prev => {
+                const newMessages = [...prev];
+                // If we added a placeholder, update it, otherwise add new
+                if (newMessages[newMessages.length - 1]?.role === 'assistant' && !newMessages[newMessages.length - 1]?.content) {
+                    newMessages[newMessages.length - 1].content = errorMessage;
+                } else {
+                    newMessages.push({ role: 'assistant', content: errorMessage });
+                }
+                return newMessages;
+            });
         } finally {
             setLoading(false);
         }
@@ -247,38 +289,44 @@ function AIStylist() {
                                 <div className="message-content">
                                     {msg.role === 'assistant' ? (
                                         <div className="ai-message-body">
-                                            {msg.content.split('\n').map((line, i) => {
-                                                if (!line.trim()) return <br key={i} />;
+                                            {msg.content === '' && loading && idx === messages.length - 1 ? (
+                                                <div className="typing-indicator" style={{ padding: '10px 0' }}>
+                                                    <span></span><span></span><span></span>
+                                                </div>
+                                            ) : (
+                                                msg.content.split('\n').map((line, i) => {
+                                                    if (!line.trim()) return <br key={i} />;
 
-                                                // Handle headings
-                                                if (line.trim().startsWith('###') || (line.trim().startsWith('**') && line.trim().endsWith('**') && line.length < 50)) {
-                                                    const cleanHeading = line.replace(/[#*]/g, '').trim();
-                                                    return <h4 key={i} className="ai-message-heading">{cleanHeading}</h4>;
-                                                }
+                                                    // Handle headings
+                                                    if (line.trim().startsWith('###') || (line.trim().startsWith('**') && line.trim().endsWith('**') && line.length < 50)) {
+                                                        const cleanHeading = line.replace(/[#*]/g, '').trim();
+                                                        return <h4 key={i} className="ai-message-heading">{cleanHeading}</h4>;
+                                                    }
 
-                                                // Handle bold text in regular lines
-                                                const renderText = (text) => {
-                                                    const parts = text.split(/(\*\*.*?\*\*)/g);
-                                                    return parts.map((part, index) => {
-                                                        if (part.startsWith('**') && part.endsWith('**')) {
-                                                            return <strong key={index}>{part.slice(2, -2)}</strong>;
-                                                        }
-                                                        return part;
-                                                    });
-                                                };
+                                                    // Handle bold text in regular lines
+                                                    const renderText = (text) => {
+                                                        const parts = text.split(/(\*\*.*?\*\*)/g);
+                                                        return parts.map((part, index) => {
+                                                            if (part.startsWith('**') && part.endsWith('**')) {
+                                                                return <strong key={index}>{part.slice(2, -2)}</strong>;
+                                                            }
+                                                            return part;
+                                                        });
+                                                    };
 
-                                                // Handle bullet points
-                                                if (line.trim().startsWith('•') || line.trim().startsWith('-')) {
-                                                    return (
-                                                        <div key={i} className="ai-message-list-item">
-                                                            <span className="ai-message-bullet">✦</span>
-                                                            <span>{renderText(line.replace(/^[•-]\s*/, ''))}</span>
-                                                        </div>
-                                                    );
-                                                }
+                                                    // Handle bullet points
+                                                    if (line.trim().startsWith('•') || line.trim().startsWith('-')) {
+                                                        return (
+                                                            <div key={i} className="ai-message-list-item">
+                                                                <span className="ai-message-bullet">✦</span>
+                                                                <span>{renderText(line.replace(/^[•-]\s*/, ''))}</span>
+                                                            </div>
+                                                        );
+                                                    }
 
-                                                return <p key={i}>{renderText(line)}</p>;
-                                            })}
+                                                    return <p key={i}>{renderText(line)}</p>;
+                                                })
+                                            )}
                                         </div>
                                     ) : (
                                         msg.content
@@ -286,16 +334,6 @@ function AIStylist() {
                                 </div>
                             </div>
                         ))
-                    )}
-                    {loading && (
-                        <div className="message assistant">
-                            <div className="message-avatar">✨</div>
-                            <div className="message-content">
-                                <div className="typing-indicator">
-                                    <span></span><span></span><span></span>
-                                </div>
-                            </div>
-                        </div>
                     )}
                     <div ref={messagesEndRef} />
                 </div>
