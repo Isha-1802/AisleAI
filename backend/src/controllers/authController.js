@@ -72,11 +72,11 @@ exports.login = async (req, res) => {
         // Check password
         const isValidPassword = await bcrypt.compare(password, user.password);
         if (!isValidPassword) {
-            console.log('Login failed: Invalid password');
-            return res.status(401).json({ error: 'Invalid credentials' });
+            console.log(`❌ Login failed: Invalid password for ${email}`);
+            return res.status(401).json({ error: 'Invalid password' });
         }
 
-        console.log('Login successful for:', email);
+        console.log(`✅ Login successful for: ${email}`);
 
         // Generate token
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
