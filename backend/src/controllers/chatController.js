@@ -1,6 +1,7 @@
 const Groq = require('groq-sdk');
 const Conversation = require('../models/Conversation');
 const Product = require('../models/Product');
+const User = require('../models/User');
 
 // Initialize Groq directly
 const groq = new Groq({
@@ -117,15 +118,38 @@ exports.chat = async (req, res) => {
                 throw new Error('Groq API key not configured');
             }
 
+            // Get user data for gender if available
+            const user = await User.findById(req.userId);
+            const userGender = user?.preferences?.gender || 'not specified';
+
             // Get recent products for context
-            const products = await Product.find().limit(5);
-            const productContext = products.map(p => `${p.name} by ${p.brand} - ₹${p.price}`).join(', ');
+            const products = await Product.find().limit(10);
+            const productContext = products.map(p => `${p.name} (${p.category}) by ${p.brand} - ₹${p.price}`).join(', ');
 
             const completion = await groq.chat.completions.create({
                 messages: [
                     {
                         role: 'system',
-                        content: `You are an expert AI fashion stylist for AisleAI, a luxury Indian fashion platform. Help users with outfit recommendations, styling advice, and fashion queries. Available products include: ${productContext}. Be friendly, knowledgeable, and provide specific recommendations.`,
+                        content: `You are "The AisleAI Stylist", a high-end luxury fashion consultant. 
+                        User Context:
+                        - Gender: ${userGender}
+                        - Bio: This user values sophistication and quality.
+                        
+                        Instructions:
+                        1. Provide expert-level fashion and beauty advice tailored specifically to their gender (${userGender}). 
+                        2. If they ask for formal party wear:
+                           - For Men: Recommend sharp Bandhgalas, tailored Tuxedos, or premium Nehru Jackets.
+                           - For Women: Recommend elegant Sarees, chic Anarkalis, or designer Evening Gowns.
+                        3. BUDGET CATEGORIZATION: When recommending items (especially skincare/makeup or clothes outside our catalog), provide options for:
+                           - **Affordable** (High-street brands)
+                           - **Mid-range** (Contemporary designers)
+                           - **High-end / Luxury** (Heritage houses)
+                        4. Internal Catalog: Reference our curated products if they fit the request: ${productContext}.
+                        5. Use a tone that is: Professional, Minimalist, and Encouraging.
+                        6. Format your response with:
+                           - Clear headings (use **TITLE** format)
+                           - Bullet points for lists
+                           - Short, punchy paragraphs.`,
                     },
                     ...conversation.messages.slice(-10).map(msg => ({
                         role: msg.role,
@@ -141,7 +165,7 @@ exports.chat = async (req, res) => {
             console.log('✅ Groq AI response generated');
         } catch (error) {
             console.error('❌ Groq AI error:', error.message);
-            aiResponse = "Hi! I'm your AI fashion stylist. I can help you with outfit recommendations for any occasion - from festive celebrations to daily wear. Just tell me about the event or your style preferences, and I'll suggest the perfect looks! 💫";
+            aiResponse = `HEARTBEAT ERROR: ${error.message}. Please check your Groq API status or model availability. Defaulting to manual assistant mode: Hi! I'm your AI fashion stylist. How can I help you today?`;
         }
 
         // Add AI response

@@ -1,11 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
 import './StyleHub.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
-function Profile({ user, onLogout }) {
+function Profile() {
+    const { user, logout: onLogout } = useAuth();
 
 
     const handleDeleteAccount = async () => {

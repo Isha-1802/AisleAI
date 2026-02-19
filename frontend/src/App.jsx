@@ -1,7 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import { CartProvider } from './context/CartContext';
-import { WishlistProvider } from './context/WishlistContext';
+import { useAuth } from './context/AuthContext';
 import Header from './components/Header';
 import Home from './pages/Home';
 import Collections from './pages/Collections';
@@ -18,21 +16,26 @@ import ScrollToTop from './components/ScrollToTop';
 import Footer from './components/Footer';
 import './App.css';
 
-function AppContent({ user, setUser, handleLogout }) {
+function AppContent() {
+  const { user, logout, loading } = useAuth();
   const location = useLocation();
   const hideFooter = location.pathname === '/ai-stylist';
 
+  if (loading) {
+    return <div className="loading-screen">Authenticating Maison Membership...</div>;
+  }
+
   return (
     <div className="app">
-      <Header user={user} onLogout={handleLogout} />
+      <Header />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/collections" element={<Collections />} />
         <Route path="/style-hub" element={<StyleHub />} />
         <Route path="/ai-stylist" element={<AIStylist user={user} />} />
-        <Route path="/login" element={<Login setUser={setUser} />} />
-        <Route path="/register" element={<Register setUser={setUser} />} />
-        <Route path="/profile" element={<Profile user={user} onLogout={handleLogout} />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/product/:id" element={<ProductDetails />} />
@@ -57,31 +60,10 @@ function AppContent({ user, setUser, handleLogout }) {
 }
 
 function App() {
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    const userData = localStorage.getItem('user');
-
-    if (token && userData) {
-      setUser(JSON.parse(userData));
-    }
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setUser(null);
-  };
-
   return (
     <Router>
-      <WishlistProvider>
-        <CartProvider>
-          <ScrollToTop />
-          <AppContent user={user} setUser={setUser} handleLogout={handleLogout} />
-        </CartProvider>
-      </WishlistProvider>
+      <ScrollToTop />
+      <AppContent />
     </Router>
   );
 }

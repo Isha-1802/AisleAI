@@ -2,10 +2,12 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './Auth.css';
+import { useAuth } from '../context/AuthContext';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
-function Register({ setUser }) {
+function Register() {
+    const { login: handleAuthLogin } = useAuth();
     const [formData, setFormData] = useState({ name: '', email: '', password: '' });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -18,9 +20,7 @@ function Register({ setUser }) {
 
         try {
             const response = await axios.post(`${API_URL}/auth/register`, formData);
-            localStorage.setItem('token', response.data.token);
-            localStorage.setItem('user', JSON.stringify(response.data.user));
-            setUser(response.data.user);
+            handleAuthLogin(response.data.user, response.data.token);
             navigate('/');
         } catch (err) {
             setError(err.response?.data?.error || 'Registration failed');

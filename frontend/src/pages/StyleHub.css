@@ -405,7 +405,72 @@
     background: #333;
 }
 
-/* LOADING */
+/* BUDGET TABS */
+.budget-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 40px;
+}
+
+.budget-tab {
+    background: white;
+    border: 1px solid #E0D8C3;
+    padding: 10px 24px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #8C7B6C;
+}
+
+.budget-tab:hover {
+    border-color: #D4AF37;
+    color: #D4AF37;
+}
+
+.budget-tab.active {
+    background: #1A1A1A;
+    color: white;
+    border-color: #1A1A1A;
+}
+
+/* RECOMMENDATIONS GRID */
+.recommendations-card {
+    border-left: 3px solid #D4AF37 !important;
+}
+
+.ai-results-subgrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.ai-item-category {
+    grid-column: 1 / -1;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: #1A1A1A;
+    margin: 20px 0 10px;
+    border-bottom: 1px solid #F3F0E9;
+    padding-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.ai-item-category:first-child {
+    margin-top: 0;
+}
+
+/* TYPING INDICATOR FIX */
+.luxury-loader {
+    margin-bottom: 30px;
+}
+
 .loading-state p {
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.5rem;

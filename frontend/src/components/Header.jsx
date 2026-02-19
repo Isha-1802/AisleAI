@@ -3,9 +3,11 @@ import { useState, useRef } from 'react';
 import { megaMenuData } from '../data/megaMenuData';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
+import { useAuth } from '../context/AuthContext';
 import './Header.css';
 
-function Header({ user, onLogout }) {
+function Header() {
+    const { user, logout: onLogout } = useAuth();
     const { getCartCount } = useCart();
     const { wishlist } = useWishlist();
     const [showUserMenu, setShowUserMenu] = useState(false);

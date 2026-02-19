@@ -98,15 +98,40 @@ router.post('/quiz-result', auth, async (req, res) => {
             });
         }
 
-        // Define prompts for each quiz type
+        // Define prompts for each quiz type with gender context
         const prompts = {
-            color: "You are a color analysis expert. Determine the user's color season.",
-            body: "You are a fashion stylist. Identify the body type and recommend silhouettes.",
-            skincare: "You are a dermatologist. Recommend a skincare routine.",
-            makeup: "You are a makeup artist. Recommend makeup products."
+            color: `You are a personalized color analysis expert. Based on the user's hair, eyes, and skin undertones, determine their "Color Season" (e.g., True Winter, Soft Autumn). Provide recommendations for clothing colors, accent colors, and jewelry that would make them look their absolute best.`,
+
+            body: `You are a professional fashion stylist. Analyze the user's body proportions (shoulders vs hips, waist definition). Identify their body shape (e.g., Hourglass, Pear, Inverted Triangle, Rectangle) and provide specific silhouette recommendations (necklines, waistlines, hemlines) that flatter their unique build.`,
+
+            skincare: `You are a skincare specialist. Based on the user's skin type, concerns (acne, aging, etc.), and budget preference (${answers.budget || 'Any'}), recommend a COMPLETE routine.
+            
+            CRITICAL REQUIREMENT: You MUST provide two separate routines:
+            1. **THE MORNING RITUAL**: Focused on protection and hydration.
+            2. **THE NIGHT RITUAL**: Focused on repair and treatment.
+            
+            For EACH step in both rituals (Cleanser, Serum, etc.), you MUST provide options across three price points:
+            - **[AFFORDABLE]**: (e.g., The Ordinary, Cetaphil, Minimalist)
+            - **[MID-RANGE]**: (e.g., COSRX, Paula's Choice, Kiehl's)
+            - **[LUXURY]**: (e.g., SK-II, La Mer, Estée Lauder)
+            
+            Ensure recommendations are gender-aware (${answers.gender}).`,
+
+            makeup: `You are a celebrity makeup artist. Based on the user's facial features, preferences (finish, coverage), and budget preference (${answers.budget || 'Any'}), recommend a personalized makeup kit. 
+            
+            For EACH item (Foundation, Blush, etc.), you MUST provide options across three price points:
+            - **[AFFORDABLE]**: (e.g., Maybelline, NYX, e.l.f.)
+            - **[MID-RANGE]**: (e.g., MAC, Clinique, Fenty)
+            - **[LUXURY]**: (e.g., Chanel, Dior, Armani Beauty)
+            
+            Ensure shade and product recommendations are gender-aware (${answers.gender}).`
         };
 
-        const systemPrompt = prompts[quizType] || "You are a fashion expert.";
+        const systemPrompt = prompts[quizType] || "You are a fashion and beauty expert.";
+
+        console.log(`DEBUG: Sending ${quizType} quiz request to Groq...`);
+
+        const modelToUse = 'llama-3.1-8b-instant';
 
         // Call Groq API
         const completion = await groq.chat.completions.create({
@@ -117,37 +142,52 @@ router.post('/quiz-result', auth, async (req, res) => {
                 },
                 {
                     role: 'user',
-                    content: `User Answers: ${JSON.stringify(answers)}. 
+                    content: `User Profile:
+                    - Identification: ${answers.gender || 'Not specified'}
+                    - Budget Preference: ${answers.budget || 'Not specified'}
+                    - Detailed Answers: ${JSON.stringify(answers)}
                     
-                    Provide a concise analysis.
+                    Provide a luxury-tier personal analysis. 
+                    If identification is 'Male', ensure all recommendations (clothing, skincare, makeup) are tailored to men. If 'Female', tailor to women.
                     
-                    IMPORTANT: Use "###" to separate these 3 sections:
+                    FORMATTING RULES:
+                    Use "###" to separate these 3 main sections:
                     
                     ###
                     **THE PROFILE**
-                    [Analysis with **bold** traits]
+                    [One paragraph deep-dive into why these results fit the user. Use **bold** for key characteristics.]
+                    
                     ###
                     **THE RECOMMENDATIONS**
-                    • **[Item Name]**: [Short description]
-                    • **[Item Name]**: [Short description]
-                    • **[Item Name]**: [Short description]
+                    [For each category of product/outfit, use this exact format:]
+                    **Category Name**
+                    - [AFFORDABLE]: Brand Name & Product Name
+                    - [MID-RANGE]: Brand Name & Product Name
+                    - [LUXURY]: Brand Name & Product Name
+                    [If skincare, do this for both Morning and Night sections]
+                    
                     ###
                     **THE STRATEGY**
-                    [One sentence strategy]
+                    [A concluding "Fashion/Beauty Philosophy" sentence for the user.]
                     
-                    Keep it short.`
+                    Keep the tone sophisticated, encouraging, and premium.`
                 },
             ],
-            model: 'llama-3.3-70b-versatile',
+            model: modelToUse,
             temperature: 0.7,
+            max_tokens: 1500,
         });
 
         const response = completion.choices[0].message.content;
+        console.log(`✅ ${quizType} quiz generated successfully using ${modelToUse}`);
         res.json({ result: response });
 
     } catch (error) {
-        console.log('Error in quiz result:', error.message);
-        res.status(500).json({ error: 'Something went wrong' });
+        console.error('❌ Error in quiz result:', error);
+        res.status(500).json({
+            error: `Atelier AI Error: ${error.message}`,
+            details: error.response?.data || "No additional details"
+        });
     }
 });
 

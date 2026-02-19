@@ -2,10 +2,12 @@ import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import './Auth.css';
+import { useAuth } from '../context/AuthContext';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
-function Login({ setUser }) {
+function Login() {
+    const { login: handleAuthLogin } = useAuth();
     const [formData, setFormData] = useState({ email: '', password: '' });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -19,9 +21,7 @@ function Login({ setUser }) {
 
         try {
             const response = await axios.post(`${API_URL}/auth/login`, formData);
-            localStorage.setItem('token', response.data.token);
-            localStorage.setItem('user', JSON.stringify(response.data.user));
-            setUser(response.data.user);
+            handleAuthLogin(response.data.user, response.data.token);
             const from = location.state?.from?.pathname || '/';
             navigate(from);
         } catch (err) {

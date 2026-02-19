@@ -2,16 +2,19 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import './StyleHub.css';
+import { useAuth } from '../context/AuthContext';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
 function StyleHub() {
+    const { user } = useAuth();
     const [activeQuiz, setActiveQuiz] = useState(null);
     const [quizAnswers, setQuizAnswers] = useState({});
     const [quizStep, setQuizStep] = useState(0);
     const [showResults, setShowResults] = useState(false);
     const [loading, setLoading] = useState(false);
     const [aiResult, setAiResult] = useState('');
+    const [budgetFilter, setBudgetFilter] = useState('LUXURY'); // Default to luxury
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -128,8 +131,7 @@ function StyleHub() {
     };
 
     const submitQuiz = async (quizId, answers) => {
-        const token = localStorage.getItem('token');
-        if (!token) {
+        if (!user) {
             localStorage.setItem('pendingQuiz', JSON.stringify({ quizId, answers }));
             navigate('/login', { state: { from: location } });
             return;
@@ -148,14 +150,29 @@ function StyleHub() {
             );
             console.log('Quiz response:', response.data);
             setAiResult(response.data.result);
+
+            // Set initial budget filter based on user choice if available
+            if (answers.budget) {
+                if (answers.budget.includes('Affordable')) setBudgetFilter('AFFORDABLE');
+                else if (answers.budget.includes('Mid-range')) setBudgetFilter('MID-RANGE');
+                else if (answers.budget.includes('Luxury')) setBudgetFilter('LUXURY');
+            }
+
             setShowResults(true);
         } catch (error) {
             console.error('Quiz submission error:', error);
-            console.error('Error response:', error.response?.data);
-            console.error('Error status:', error.response?.status);
 
-            // Show more specific error message
-            const errorMsg = error.response?.data?.error || error.message || "Sorry, we couldn't generate your results right now. Please try again.";
+            // Extract the most helpful error message possible
+            let errorMsg = "Sorry, we couldn't generate your results right now.";
+
+            if (error.response?.data?.error) {
+                errorMsg = error.response.data.error;
+            } else if (error.message === "Network Error") {
+                errorMsg = "Connection lost. Please check if the backend server is running.";
+            } else if (error.message) {
+                errorMsg = `Error: ${error.message}`;
+            }
+
             setAiResult(errorMsg);
             setShowResults(true);
         } finally {
@@ -179,11 +196,18 @@ function StyleHub() {
                 <h2 className="results-title">Your {quiz.title} Results</h2>
 
                 {loading ? (
-                    <div className="loading-state" style={{ padding: '40px', textAlign: 'center' }}>
-                        <div className="typing-indicator" style={{ display: 'inline-block', marginBottom: '20px' }}>
-                            <span></span><span></span><span></span>
+                    <div className="loading-state" style={{ padding: '60px 20px', textAlign: 'center' }}>
+                        <div className="luxury-loader">
+                            <div className="typing-indicator">
+                                <span></span><span></span><span></span>
+                            </div>
                         </div>
-                        <p>Analyzing your answers with AI...</p>
+                        <h3 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.8rem', marginTop: '20px' }}>
+                            Curating Your Luxury Edit
+                        </h3>
+                        <p style={{ color: '#666', fontStyle: 'italic', maxWidth: '400px', margin: '15px auto' }}>
+                            Our AI is analyzing your unique profile to build a personalized style and beauty strategy...
+                        </p>
                     </div>
                 ) : (
                     <>
@@ -201,17 +225,91 @@ function StyleHub() {
                                 The Curator's Edit
                             </h3>
 
+                            {/* Budget Filtering Tabs */}
+                            <div className="budget-tabs">
+                                {['AFFORDABLE', 'MID-RANGE', 'LUXURY'].map((tier) => (
+                                    <button
+                                        key={tier}
+                                        className={`budget-tab ${budgetFilter === tier ? 'active' : ''}`}
+                                        onClick={() => setBudgetFilter(tier)}
+                                    >
+                                        {tier}
+                                    </button>
+                                ))}
+                            </div>
+
                             <div className="ai-results-grid">
                                 {aiResult.split('###').map((section, index) => {
                                     if (!section.trim()) return null;
 
-                                    // Parse the title
                                     const lines = section.trim().split('\n');
-                                    const titleMatch = lines[0].match(/\*\*(.*?)\*\*/);
-                                    const title = titleMatch ? titleMatch[1] : 'INSIGHT';
-                                    const contentLines = lines.slice(1);
+                                    let title = 'INSIGHT';
+                                    let contentStartIdx = 0;
 
+                                    if (lines[0].includes('**')) {
+                                        const titleMatch = lines[0].match(/\*\*(.*?)\*\*/);
+                                        title = titleMatch ? titleMatch[1] : lines[0].replace(/[#*]/g, '').trim();
+                                        contentStartIdx = 1;
+                                    }
+
+                                    const isRecommendations = title.toUpperCase().includes('RECOMMENDATIONS');
                                     const icons = ['✦', '✷', '∞'];
+
+                                    const renderText = (text) => {
+                                        if (!text) return '';
+                                        const parts = text.split(/(\*\*.*?\*\*)/g);
+                                        return parts.map((part, i) => {
+                                            if (part.startsWith('**') && part.endsWith('**')) {
+                                                return <strong key={i}>{part.slice(2, -2)}</strong>;
+                                            }
+                                            return part;
+                                        });
+                                    };
+
+                                    // Filter lines if it's the recommendations section
+                                    let contentLines = lines.slice(contentStartIdx);
+                                    if (isRecommendations) {
+                                        const filteredLines = [];
+                                        let currentCategory = null;
+
+                                        contentLines.forEach(line => {
+                                            const trimmed = line.trim();
+                                            if (!trimmed) return;
+
+                                            // Detect category headings (bold lines without bullet points)
+                                            if (trimmed.startsWith('**') && trimmed.endsWith('**') && !trimmed.includes(':')) {
+                                                currentCategory = trimmed;
+                                                filteredLines.push({ type: 'category', text: trimmed });
+                                            } else if (trimmed.includes(`[${budgetFilter}]`)) {
+                                                filteredLines.push({ type: 'item', text: trimmed.replace(`[${budgetFilter}]:`, '').replace(`[${budgetFilter}]`, '').trim() });
+                                            } else if (trimmed.toUpperCase().includes('RITUAL') || trimmed.toUpperCase().includes('ROUTINE')) {
+                                                filteredLines.push({ type: 'ritual', text: trimmed });
+                                            }
+                                        });
+
+                                        // If filtered list is empty but AI provided text, show original as fallback
+                                        if (filteredLines.length > 0) {
+                                            return (
+                                                <div key={index} className="ai-result-card recommendations-card" style={{ gridColumn: '1 / -1' }}>
+                                                    <span className="ai-card-icon">{icons[1]}</span>
+                                                    <h4 className="ai-card-title">{title}</h4>
+                                                    <div className="ai-results-subgrid">
+                                                        {filteredLines.map((item, i) => {
+                                                            if (item.type === 'category' || item.type === 'ritual') {
+                                                                return <h5 key={i} className="ai-item-category">{renderText(item.text)}</h5>;
+                                                            }
+                                                            return (
+                                                                <div key={i} className="ai-list-item">
+                                                                    <span className="ai-bullet">✦</span>
+                                                                    <span>{renderText(item.text)}</span>
+                                                                </div>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                </div>
+                                            );
+                                        }
+                                    }
 
                                     return (
                                         <div key={index} className="ai-result-card">
@@ -220,18 +318,16 @@ function StyleHub() {
                                             <div className="ai-card-body">
                                                 {contentLines.map((line, i) => {
                                                     if (!line.trim()) return null;
-
-                                                    // Render list items
                                                     if (line.trim().startsWith('•') || line.trim().startsWith('-')) {
+                                                        const cleanLine = line.replace(/^[•-]\s*/, '');
                                                         return (
                                                             <div key={i} className="ai-list-item">
                                                                 <span className="ai-bullet">›</span>
-                                                                <span>{line.replace(/^[•-]\s*/, '')}</span>
+                                                                <span>{renderText(cleanLine)}</span>
                                                             </div>
                                                         );
                                                     }
-
-                                                    return <p key={i} style={{ marginBottom: '12px' }}>{line}</p>;
+                                                    return <p key={i} style={{ marginBottom: '12px' }}>{renderText(line)}</p>;
                                                 })}
                                             </div>
                                         </div>

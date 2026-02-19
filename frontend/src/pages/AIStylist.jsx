@@ -1,47 +1,35 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
 import './AIStylist.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
-function AIStylist({ user: userProp }) {
+function AIStylist() {
+    const { user, loading: authLoading } = useAuth();
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
     const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth > 768);
     const [conversations, setConversations] = useState([]);
     const [activeConversation, setActiveConversation] = useState(null);
-    const [user, setUser] = useState(null);
     const messagesEndRef = useRef(null);
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Check authentication from localStorage
-        const token = localStorage.getItem('token');
-        const userData = localStorage.getItem('user');
-
-        if (!token || !userData) {
+        if (!authLoading && !user) {
             console.log('No authentication found, redirecting to login...');
             navigate('/login');
             return;
         }
 
-        try {
-            const parsedUser = JSON.parse(userData);
-            setUser(parsedUser);
-
-            // Load conversations list
+        if (user) {
             loadConversations();
-
-            // Start with empty chat (no active conversation)
             setMessages([]);
             setActiveConversation(null);
-        } catch (error) {
-            console.error('Failed to parse user data:', error);
-            navigate('/login');
         }
-    }, [navigate]);
+    }, [user, authLoading, navigate]);
 
     useEffect(() => {
         scrollToBottom();
@@ -257,7 +245,44 @@ function AIStylist({ user: userProp }) {
                                     {msg.role === 'user' ? user.name.charAt(0).toUpperCase() : '✨'}
                                 </div>
                                 <div className="message-content">
-                                    {msg.content}
+                                    {msg.role === 'assistant' ? (
+                                        <div className="ai-message-body">
+                                            {msg.content.split('\n').map((line, i) => {
+                                                if (!line.trim()) return <br key={i} />;
+
+                                                // Handle headings
+                                                if (line.trim().startsWith('###') || (line.trim().startsWith('**') && line.trim().endsWith('**') && line.length < 50)) {
+                                                    const cleanHeading = line.replace(/[#*]/g, '').trim();
+                                                    return <h4 key={i} className="ai-message-heading">{cleanHeading}</h4>;
+                                                }
+
+                                                // Handle bold text in regular lines
+                                                const renderText = (text) => {
+                                                    const parts = text.split(/(\*\*.*?\*\*)/g);
+                                                    return parts.map((part, index) => {
+                                                        if (part.startsWith('**') && part.endsWith('**')) {
+                                                            return <strong key={index}>{part.slice(2, -2)}</strong>;
+                                                        }
+                                                        return part;
+                                                    });
+                                                };
+
+                                                // Handle bullet points
+                                                if (line.trim().startsWith('•') || line.trim().startsWith('-')) {
+                                                    return (
+                                                        <div key={i} className="ai-message-list-item">
+                                                            <span className="ai-message-bullet">✦</span>
+                                                            <span>{renderText(line.replace(/^[•-]\s*/, ''))}</span>
+                                                        </div>
+                                                    );
+                                                }
+
+                                                return <p key={i}>{renderText(line)}</p>;
+                                            })}
+                                        </div>
+                                    ) : (
+                                        msg.content
+                                    )}
                                 </div>
                             </div>
                         ))
