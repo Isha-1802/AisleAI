@@ -125,14 +125,19 @@ router.post('/quiz-result', auth, async (req, res) => {
 
         console.log(`DEBUG: Sending ${quizType} quiz request to Groq...`);
 
-        const modelToUse = 'llama-3.1-8b-instant';
+        const modelToUse = 'llama-3.3-70b-versatile';
 
         // Call Groq API
         const completion = await groq.chat.completions.create({
             messages: [
                 {
                     role: 'system',
-                    content: systemPrompt
+                    content: `${systemPrompt} 
+                    
+                    STRICT ACCURACY RULES:
+                    1. ONLY recommend real-world products from established brands (e.g., Charlotte Tilbury, The Ordinary, Zara, Sabyasachi, etc.) that actually exist in the real world.
+                    2. DO NOT invent or fabricate product names. 
+                    3. Ensure every product is a REAL item currently sold by that brand.`
                 },
                 {
                     role: 'user',
@@ -153,10 +158,10 @@ router.post('/quiz-result', auth, async (req, res) => {
                     
                     ###
                     **THE RECOMMENDATIONS**
-                    [ONLY show items for the user's selected budget: ${answers.budget}]
-                    [For each category of product/outfit, use this exact format:]
+                    [ONLY show REAL products for the user's selected budget: ${answers.budget}]
+                    [For each category, list one specific, real-world product.]
                     **Category Name**
-                    - Brand Name & Product Name
+                    - Brand Name & REAL Product Name
                     [If skincare, do this for both Morning and Night sections]
                     
                     ###
@@ -167,7 +172,7 @@ router.post('/quiz-result', auth, async (req, res) => {
                 },
             ],
             model: modelToUse,
-            temperature: 0.7,
+            temperature: 0.6,
             max_tokens: 1500,
         });
 
