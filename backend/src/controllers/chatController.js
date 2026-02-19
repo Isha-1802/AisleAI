@@ -109,39 +109,26 @@ exports.chat = async (req, res) => {
         let aiResponse = '';
 
         try {
-            console.log(`🚀 DEBUG: Starting real-time stream for user message: "${message}"`);
-            if (!groq || !process.env.GROQ_API_KEY) {
-                throw new Error('Groq API key not configured');
-            }
+            console.log(`🚀 DEBUG: Processing chat message: "${message}"`);
 
             const user = await User.findById(req.userId);
             const userGender = user?.preferences?.gender || 'not specified';
-            const products = await Product.find().limit(10);
-            const productContext = products.map(p => `${p.name} (${p.category}) by ${p.brand} - ₹${p.price}`).join(', ');
+            const products = await Product.find().limit(5);
+            const productContext = products.map(p => `${p.name}`).join(', ');
 
-            // Set headers for SSE
-            res.setHeader('Content-Type', 'text/event-stream');
-            res.setHeader('Cache-Control', 'no-cache');
-            res.setHeader('Connection', 'keep-alive');
-
-            const stream = await groq.chat.completions.create({
+            const completion = await groq.chat.completions.create({
                 messages: [
                     {
                         role: 'system',
-                        content: `You are "The AisleAI Stylist", an elite fashion consultant for a luxury boutique. 
+                        content: `You are "The AisleAI Stylist", an elite fashion consultant.
+                        USER GENDER: ${userGender}
+                        BOUTIQUE PIECES: ${productContext}
                         
-                        USER PROFILE:
-                        - Gender Identity: ${userGender}
-                        - Aesthetic: Sophisticated, High-End, Personalized.
-                        
-                        YOUR OBJECTIVE:
-                        1. GLOBAL EXPERTISE: You are an expert in world fashion—from Paris High Fashion and Korean Street Style to modern Indian Couture and Minimalist Western trends.
-                        2. OCCASION PRECISION: Only suggest outfits that strictly fit the specific occasion mentioned. DO NOT repeat generic gowns for everything.
-                        3. BRAND DIVERSITY: Recommend REAL products from any relevant global brand (e.g., Jacquemus, Gentle Monster, Ader Error, Masaba, Zara, Cos, etc.).
-                        4. OUR BOUTIQUE: You may *subtly* mention items from our curated selection if they are a perfect fit, but never prioritize them over the user's specific style need: ${productContext}.
-                        5. REAL-WORLD DATA: Every single recommendation must be a real, existing product that the user can buy in the real world.
-                        6. BUDGETING: Provide choices for **Affordable**, **Mid-range**, and **Luxury** tiers.
-                        7. TONE: Sophisticated, Modern, and Sharp.`
+                        STRICT RULES:
+                        1. RECOMMEND REAL PRODUCTS from global brands (Korean, Western, Modern Indian).
+                        2. Match the specific occasion.
+                        3. Provide Affordable, Mid-range, and Luxury options.
+                        4. Tone: Sophisticated and Sharp.`
                     },
                     ...conversation.messages.slice(-10).map(msg => ({
                         role: msg.role,
@@ -151,18 +138,11 @@ exports.chat = async (req, res) => {
                 model: 'llama-3.3-70b-versatile',
                 temperature: 0.7,
                 max_tokens: 1000,
-                stream: true,
             });
 
-            for await (const chunk of stream) {
-                const content = chunk.choices[0]?.delta?.content || '';
-                if (content) {
-                    aiResponse += content;
-                    res.write(`data: ${JSON.stringify({ content })}\n\n`);
-                }
-            }
+            aiResponse = completion.choices[0].message.content;
+            console.log('✅ AI Response generated successfully');
 
-            // After stream ends, save the full response to database
             conversation.messages.push({
                 role: 'assistant',
                 content: aiResponse,
@@ -170,14 +150,14 @@ exports.chat = async (req, res) => {
             conversation.updatedAt = new Date();
             await conversation.save();
 
-            res.write(`data: ${JSON.stringify({ done: true, conversationId: conversation._id })}\n\n`);
-            res.end();
+            res.json({
+                message: aiResponse,
+                conversationId: conversation._id
+            });
 
         } catch (error) {
-            console.error('❌ Streaming AI error:', error.message);
-            const errorMsg = `ERROR: ${error.message}`;
-            res.write(`data: ${JSON.stringify({ error: errorMsg })}\n\n`);
-            res.end();
+            console.error('❌ AI error:', error.message);
+            res.status(500).json({ error: `AI Error: ${error.message}` });
         }
     } catch (error) {
         console.error('Chat error:', error);

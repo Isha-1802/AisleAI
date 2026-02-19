@@ -98,6 +98,9 @@ router.post('/quiz-result', auth, async (req, res) => {
             });
         }
 
+        console.log(`DEBUG: Quiz request received: ${quizType}`);
+        console.log(`DEBUG: Answers:`, JSON.stringify(answers));
+
         // Define prompts for each quiz type with gender context
         const prompts = {
             color: `You are a personalized color analysis expert. Based on the user's hair, eyes, and skin undertones, determine their "Color Season" (e.g., True Winter, Soft Autumn). Provide recommendations for clothing colors, accent colors, and jewelry that would make them look their absolute best.`,
