@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
@@ -7,8 +7,37 @@ import './StyleHub.css';
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
 function Profile() {
-    const { user, logout: onLogout } = useAuth();
+    const { user, setUser, logout: onLogout } = useAuth(); // Add setUser
 
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token || !user) return; // Only fetch if logged in
+
+                const response = await axios.get(`${API_URL}/user/profile`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+
+                if (response.data.user) {
+                    // Update global state if data changed (simple check)
+                    // We merge to be safe, but response should be full user
+                    const updatedUser = { ...user, ...response.data.user };
+
+                    // Only update if preferences actually differ to avoid loops, 
+                    // or just trust the response.
+                    // A simple comparison of preferences stringified might be enough.
+                    if (JSON.stringify(user.preferences) !== JSON.stringify(response.data.user.preferences)) {
+                        setUser(updatedUser);
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to fetch profile:', error);
+            }
+        };
+
+        fetchProfile();
+    }, []); // Run once on mount
 
     const handleDeleteAccount = async () => {
         if (window.confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
@@ -84,6 +113,31 @@ function Profile() {
                         MAISON MEMBER
                     </p>
 
+                    {(user.preferences?.bodyShape || user.preferences?.colorAnalysis) && (
+                        <div style={{ marginTop: '24px', display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '20px' }}>
+                            {user.preferences.bodyShape && (
+                                <p style={{
+                                    fontFamily: 'Montserrat', fontSize: '0.8rem', color: '#1A1A1A',
+                                    letterSpacing: '1px', textTransform: 'uppercase', margin: 0,
+                                    padding: '8px 16px', border: '1px solid #E0DBCE', background: '#FAF9F6'
+                                }}>
+                                    <span style={{ color: '#D4AF37', marginRight: '8px' }}>✦</span>
+                                    <strong>Body Shape:</strong> {user.preferences.bodyShape.shape}
+                                </p>
+                            )}
+                            {user.preferences.colorAnalysis && (
+                                <p style={{
+                                    fontFamily: 'Montserrat', fontSize: '0.8rem', color: '#1A1A1A',
+                                    letterSpacing: '1px', textTransform: 'uppercase', margin: 0,
+                                    padding: '8px 16px', border: '1px solid #E0DBCE', background: '#FAF9F6'
+                                }}>
+                                    <span style={{ color: '#D4AF37', marginRight: '8px' }}>✦</span>
+                                    <strong>Color Palette:</strong> {user.preferences.colorAnalysis.season}
+                                </p>
+                            )}
+                        </div>
+                    )}
+
                     <button onClick={onLogout} className="feature-cta-btn" style={{
                         marginTop: '16px',
                         background: 'transparent',
@@ -151,94 +205,97 @@ function Profile() {
                     width: '100%'
                 }}>
 
-                    {/* My Style Profile */}
-                    <div className="style-feature-card" style={{
-                        padding: '40px', background: 'linear-gradient(135deg, #FDFBF7 0%, #FFF 100%)', borderRadius: '0',
-                        border: '1px solid #E0D8C3', boxShadow: '0 10px 40px rgba(0,0,0,0.08)',
-                        transition: 'all 0.3s ease',
-                        display: 'flex', flexDirection: 'column',
-                        position: 'relative',
-                        overflow: 'hidden'
-                    }}>
-                        {/* Decorative corner */}
-                        <div style={{
-                            position: 'absolute', top: 0, right: 0,
-                            width: '100px', height: '100px',
-                            background: 'linear-gradient(135deg, #D4AF37 0%, transparent 100%)',
-                            opacity: 0.1
-                        }}></div>
-
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px', position: 'relative' }}>
-                            <h3 className="feature-title" style={{ color: '#1A1A1A', margin: 0, fontSize: '1.6rem', fontFamily: 'Cormorant Garamond' }}>Style Identity</h3>
-                            <span style={{ fontSize: '1.5rem' }}>✨</span>
-                        </div>
-
-                        {/* Empty State - No Quiz Taken */}
-                        <div style={{
-                            textAlign: 'center',
-                            padding: '40px 20px',
-                            flex: 1,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'center',
-                            alignItems: 'center'
+                    {/* My Style Profile - Only show if NO data saved */}
+                    {!(user.preferences?.colorAnalysis || user.preferences?.bodyShape) && (
+                        <div className="style-feature-card" style={{
+                            padding: '40px', background: 'linear-gradient(135deg, #FDFBF7 0%, #FFF 100%)', borderRadius: '0',
+                            border: '1px solid #E0D8C3', boxShadow: '0 10px 40px rgba(0,0,0,0.08)',
+                            transition: 'all 0.3s ease',
+                            display: 'flex', flexDirection: 'column',
+                            position: 'relative',
+                            overflow: 'hidden'
                         }}>
+                            {/* Decorative corner */}
                             <div style={{
-                                width: '80px',
-                                height: '80px',
-                                borderRadius: '50%',
-                                background: 'linear-gradient(135deg, #D4AF37 0%, #C9A961 100%)',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                marginBottom: '24px',
-                                boxShadow: '0 10px 30px rgba(212, 175, 55, 0.3)'
-                            }}>
-                                <span style={{ fontSize: '2rem' }}>🎨</span>
+                                position: 'absolute', top: 0, right: 0,
+                                width: '100px', height: '100px',
+                                background: 'linear-gradient(135deg, #D4AF37 0%, transparent 100%)',
+                                opacity: 0.1
+                            }}></div>
+
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px', position: 'relative' }}>
+                                <h3 className="feature-title" style={{ color: '#1A1A1A', margin: 0, fontSize: '1.6rem', fontFamily: 'Cormorant Garamond' }}>Style Identity</h3>
+                                <span style={{ fontSize: '1.5rem' }}>✨</span>
                             </div>
-                            <p style={{
-                                marginBottom: '16px',
-                                fontStyle: 'italic',
-                                color: '#666',
-                                fontSize: '1rem',
-                                fontFamily: 'Cormorant Garamond',
-                                lineHeight: 1.6
+
+                            <div style={{
+                                textAlign: 'center',
+                                padding: '40px 20px',
+                                flex: 1,
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'center',
+                                alignItems: 'center'
                             }}>
-                                Discover your unique style profile
-                            </p>
-                            <p style={{
-                                color: '#999',
-                                fontSize: '0.85rem',
-                                marginBottom: '32px',
-                                maxWidth: '300px',
-                                lineHeight: 1.5
-                            }}>
-                                Take our personalized quiz to unlock AI-powered recommendations tailored to your body shape, color season, and aesthetic preferences.
-                            </p>
-                            <Link to="/style-hub" style={{
-                                display: 'inline-block',
-                                background: '#1A1A1A',
-                                color: 'white',
-                                padding: '14px 32px',
-                                textDecoration: 'none',
-                                fontWeight: '600',
-                                fontSize: '0.75rem',
-                                letterSpacing: '2px',
-                                transition: 'all 0.3s ease',
-                                border: '2px solid #1A1A1A'
-                            }}
-                                onMouseEnter={(e) => {
-                                    e.target.style.background = 'transparent';
-                                    e.target.style.color = '#1A1A1A';
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.target.style.background = '#1A1A1A';
-                                    e.target.style.color = 'white';
+                                <div style={{
+                                    width: '80px',
+                                    height: '80px',
+                                    borderRadius: '50%',
+                                    background: 'linear-gradient(135deg, #D4AF37 0%, #C9A961 100%)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    marginBottom: '24px',
+                                    boxShadow: '0 10px 30px rgba(212, 175, 55, 0.3)'
                                 }}>
-                                BEGIN STYLE QUIZ
-                            </Link>
+                                    <span style={{ fontSize: '2rem' }}>🎨</span>
+                                </div>
+                                <p style={{
+                                    marginBottom: '16px',
+                                    fontStyle: 'italic',
+                                    color: '#666',
+                                    fontSize: '1rem',
+                                    fontFamily: 'Cormorant Garamond',
+                                    lineHeight: 1.6
+                                }}>
+                                    Discover your unique style profile
+                                </p>
+                                <p style={{
+                                    color: '#999',
+                                    fontSize: '0.85rem',
+                                    marginBottom: '32px',
+                                    maxWidth: '300px',
+                                    lineHeight: 1.5
+                                }}>
+                                    Take our personalized quiz to unlock AI-powered recommendations tailored to your body shape, color season, and aesthetic preferences.
+                                </p>
+                                <Link to="/style-hub" style={{
+                                    display: 'inline-block',
+                                    background: '#1A1A1A',
+                                    color: 'white',
+                                    padding: '14px 32px',
+                                    textDecoration: 'none',
+                                    fontWeight: '600',
+                                    fontSize: '0.75rem',
+                                    letterSpacing: '2px',
+                                    transition: 'all 0.3s ease',
+                                    border: '2px solid #1A1A1A'
+                                }}
+                                    onMouseEnter={(e) => {
+                                        e.target.style.background = 'transparent';
+                                        e.target.style.color = '#1A1A1A';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.target.style.background = '#1A1A1A';
+                                        e.target.style.color = 'white';
+                                    }}>
+                                    BEGIN STYLE QUIZ
+                                </Link>
+                            </div>
                         </div>
-                    </div>
+                    )}
+
+
 
                     {/* Recent Orders */}
                     <div className="style-feature-card" style={{
@@ -290,7 +347,7 @@ function Profile() {
 
                 </div>
             </div>
-        </div>
+        </div >
     );
 }
 

@@ -23,6 +23,15 @@ const userSchema = new mongoose.Schema({
             bottom: String,
             shoes: String,
         },
+        colorAnalysis: {
+            season: String,
+            undertone: String,
+            recommendations: String,
+        },
+        bodyShape: {
+            shape: String,
+            recommendations: String,
+        },
     },
     favorites: [{
         type: mongoose.Schema.Types.ObjectId,

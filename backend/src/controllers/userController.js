@@ -32,15 +32,40 @@ exports.deleteUser = async (req, res) => {
 exports.updatePreferences = async (req, res) => {
     try {
         const { preferences } = req.body;
+        console.log('Update Request - Preferences:', JSON.stringify(preferences, null, 2));
 
+        const updateFields = {};
+
+        // Use dot notation to update nested fields without overwriting siblings
+        if (preferences && preferences.colorAnalysis) {
+            updateFields['preferences.colorAnalysis'] = preferences.colorAnalysis;
+        }
+        if (preferences && preferences.bodyShape) {
+            updateFields['preferences.bodyShape'] = preferences.bodyShape;
+        }
+        // Handle other fields similarly
+        if (preferences && preferences.style) updateFields['preferences.style'] = preferences.style;
+        if (preferences && preferences.favoriteColors) updateFields['preferences.favoriteColors'] = preferences.favoriteColors;
+        if (preferences && preferences.sizes) updateFields['preferences.sizes'] = preferences.sizes;
+
+        console.log('Update Fields:', updateFields);
+
+        // Atomic update
         const user = await User.findByIdAndUpdate(
             req.userId,
-            { preferences },
-            { new: true }
+            { $set: updateFields },
+            { new: true, runValidators: true }
         ).select('-password');
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        console.log('Updated User in DB:', JSON.stringify(user, null, 2));
 
         res.json({ user });
     } catch (error) {
+        console.error('Update preferences error:', error);
         res.status(500).json({ error: 'Failed to update preferences' });
     }
 };

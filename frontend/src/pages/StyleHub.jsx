@@ -7,7 +7,7 @@ import { useAuth } from '../context/AuthContext';
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
 function StyleHub() {
-    const { user } = useAuth();
+    const { user, setUser } = useAuth();
     const [activeQuiz, setActiveQuiz] = useState(null);
     const [quizAnswers, setQuizAnswers] = useState({});
     const [quizStep, setQuizStep] = useState(0);
@@ -224,9 +224,13 @@ function StyleHub() {
                 </div>
 
                 <div className="results-card ai-analysis-card" style={{ background: 'transparent', border: 'none', padding: 0, boxShadow: 'none' }}>
-                    <h3 style={{ textAlign: 'center', marginBottom: '40px', fontSize: '2rem', fontFamily: 'Cormorant Garamond, serif' }}>
-                        The Curator's Edit
-                    </h3>
+                    <div className="curator-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px', flexWrap: 'wrap', gap: '20px' }}>
+                        <h3 style={{ margin: 0, fontSize: '2rem', fontFamily: 'Cormorant Garamond, serif' }}>
+                            The Curator's Edit
+                        </h3>
+
+
+                    </div>
 
                     {!aiResult && loading ? (
                         <div className="loading-state" style={{ padding: '40px 20px', textAlign: 'center' }}>
@@ -334,8 +338,9 @@ function StyleHub() {
                     )}
                 </div>
 
-                <div style={{ textAlign: 'center', marginTop: '40px' }}>
-                    <button className="reset-btn" onClick={resetQuiz}>Back to Style Hub</button>
+                <div className="actions-footer" style={{ textAlign: 'center', marginTop: '60px', display: 'flex', justifyContent: 'center', gap: '20px' }}>
+                    <button className="reset-btn" onClick={resetQuiz} style={{ margin: 0 }}>Back to Style Hub</button>
+                    <button className="reset-btn" onClick={() => navigate('/profile')} style={{ margin: 0, backgroundColor: 'transparent', color: '#1A1A1A', border: '1px solid #1A1A1A' }}>View My Profile</button>
                 </div>
             </div>
         );
