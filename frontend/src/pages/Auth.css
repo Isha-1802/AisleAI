@@ -72,6 +72,44 @@
     letter-spacing: 1px;
 }
 
+/* Password field with eye toggle */
+.password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-wrapper input {
+    width: 100%;
+    padding-right: 48px;
+    /* room for the eye icon */
+}
+
+.eye-toggle {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    color: #999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease;
+    line-height: 0;
+}
+
+.eye-toggle:hover {
+    color: #D4AF37;
+}
+
+.eye-toggle:focus {
+    outline: none;
+}
+
 .form-group input {
     width: 100%;
     padding: 16px;
@@ -83,6 +121,7 @@
     outline: none;
     transition: all 0.3s ease;
     font-family: 'Montserrat', sans-serif;
+    box-sizing: border-box;
 }
 
 .form-group input::placeholder {
