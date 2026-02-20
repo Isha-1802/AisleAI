@@ -138,43 +138,63 @@ function StyleHub() {
         }
 
         setLoading(true);
+        setShowResults(true);
+        setAiResult('');
+
         try {
             const token = localStorage.getItem('token');
-            console.log('Submitting quiz:', quizId);
-            console.log('Token exists:', !!token);
-            console.log('API URL:', `${API_URL}/style-hub/quiz-result`);
+            const response = await fetch(`${API_URL}/style-hub/quiz-result`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ quizType: quizId, answers })
+            });
 
-            const response = await axios.post(`${API_URL}/style-hub/quiz-result`,
-                { quizType: quizId, answers },
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
-            console.log('Quiz response:', response.data);
-            setAiResult(response.data.result);
+            if (!response.ok) throw new Error('Failed to connect to AI');
 
-            // Set initial budget filter based on user choice if available
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let fullContent = '';
+            let leftover = '';
+
             if (answers.budget) {
                 if (answers.budget.includes('Affordable')) setBudgetFilter('AFFORDABLE');
                 else if (answers.budget.includes('Mid-range')) setBudgetFilter('MID-RANGE');
                 else if (answers.budget.includes('Luxury')) setBudgetFilter('LUXURY');
             }
 
-            setShowResults(true);
+            while (true) {
+                const { value, done } = await reader.read();
+                if (done) break;
+
+                const chunk = decoder.decode(value, { stream: true });
+                const lines = (leftover + chunk).split('\n');
+                leftover = lines.pop() || '';
+
+                for (const line of lines) {
+                    const trimmedLine = line.trim();
+                    if (trimmedLine.startsWith('data: ')) {
+                        try {
+                            const data = JSON.parse(trimmedLine.slice(6));
+                            if (data.error) throw new Error(data.error);
+                            if (data.content) {
+                                fullContent += data.content;
+                                setAiResult(fullContent);
+                                if (fullContent.length > 50) {
+                                    setLoading(false);
+                                }
+                            }
+                        } catch (e) {
+                            console.error('Error parsing stream chunk:', e);
+                        }
+                    }
+                }
+            }
         } catch (error) {
             console.error('Quiz submission error:', error);
-
-            // Extract the most helpful error message possible
-            let errorMsg = "Sorry, we couldn't generate your results right now.";
-
-            if (error.response?.data?.error) {
-                errorMsg = error.response.data.error;
-            } else if (error.message === "Network Error") {
-                errorMsg = "Connection lost. Please check if the backend server is running.";
-            } else if (error.message) {
-                errorMsg = `Error: ${error.message}`;
-            }
-
-            setAiResult(errorMsg);
-            setShowResults(true);
+            setAiResult(`Error: ${error.message}`);
         } finally {
             setLoading(false);
         }
@@ -190,136 +210,139 @@ function StyleHub() {
 
     const renderResults = () => {
         const quiz = quizzes[activeQuiz];
-
         return (
             <div className="quiz-results fade-in">
                 <h2 className="results-title">Your {quiz.title} Results</h2>
 
-                {loading ? (
-                    <div className="loading-state" style={{ padding: '60px 20px', textAlign: 'center' }}>
-                        <div className="luxury-loader">
-                            <div className="typing-indicator">
-                                <span></span><span></span><span></span>
+                <div className="results-card">
+                    <h3>Your Profile</h3>
+                    <ul className="results-summary">
+                        {Object.entries(quizAnswers).map(([key, value]) => (
+                            <li key={key}><strong>{key.charAt(0).toUpperCase() + key.slice(1)}:</strong> {value}</li>
+                        ))}
+                    </ul>
+                </div>
+
+                <div className="results-card ai-analysis-card" style={{ background: 'transparent', border: 'none', padding: 0, boxShadow: 'none' }}>
+                    <h3 style={{ textAlign: 'center', marginBottom: '40px', fontSize: '2rem', fontFamily: 'Cormorant Garamond, serif' }}>
+                        The Curator's Edit
+                    </h3>
+
+                    {!aiResult && loading ? (
+                        <div className="loading-state" style={{ padding: '40px 20px', textAlign: 'center' }}>
+                            <div className="luxury-loader">
+                                <div className="typing-indicator">
+                                    <span></span><span></span><span></span>
+                                </div>
                             </div>
-                        </div>
-                        <h3 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.8rem', marginTop: '20px' }}>
-                            Curating Your Luxury Edit
-                        </h3>
-                        <p style={{ color: '#666', fontStyle: 'italic', maxWidth: '400px', margin: '15px auto' }}>
-                            Our AI is analyzing your unique profile to build a personalized style and beauty strategy...
-                        </p>
-                    </div>
-                ) : (
-                    <>
-                        <div className="results-card">
-                            <h3>Your Profile</h3>
-                            <ul className="results-summary">
-                                {Object.entries(quizAnswers).map(([key, value]) => (
-                                    <li key={key}><strong>{key.charAt(0).toUpperCase() + key.slice(1)}:</strong> {value}</li>
-                                ))}
-                            </ul>
-                        </div>
-
-                        <div className="results-card ai-analysis-card" style={{ background: 'transparent', border: 'none', padding: 0, boxShadow: 'none' }}>
-                            <h3 style={{ textAlign: 'center', marginBottom: '40px', fontSize: '2rem', fontFamily: 'Cormorant Garamond, serif' }}>
-                                The Curator's Edit
+                            <h3 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.8rem', marginTop: '20px' }}>
+                                Curating Your Luxury Edit
                             </h3>
+                            <p style={{ color: '#666', fontStyle: 'italic', maxWidth: '400px', margin: '15px auto' }}>
+                                Our AI is analyzing your unique profile to build a personalized style and beauty strategy...
+                            </p>
+                        </div>
+                    ) : (
+                        <div className="ai-results-grid">
+                            {aiResult.split('###').map((section, index) => {
+                                if (!section.trim()) return null;
 
-                            <div className="ai-results-grid">
-                                {aiResult.split('###').map((section, index) => {
-                                    if (!section.trim()) return null;
+                                const lines = section.trim().split('\n');
+                                let title = 'INSIGHT';
+                                let contentStartIdx = 0;
 
-                                    const lines = section.trim().split('\n');
-                                    let title = 'INSIGHT';
-                                    let contentStartIdx = 0;
+                                if (lines[0].includes('**')) {
+                                    const titleMatch = lines[0].match(/\*\*(.*?)\*\*/);
+                                    title = titleMatch ? titleMatch[1] : lines[0].replace(/[#*]/g, '').trim();
+                                    contentStartIdx = 1;
+                                }
 
-                                    if (lines[0].includes('**')) {
-                                        const titleMatch = lines[0].match(/\*\*(.*?)\*\*/);
-                                        title = titleMatch ? titleMatch[1] : lines[0].replace(/[#*]/g, '').trim();
-                                        contentStartIdx = 1;
-                                    }
+                                const isRecommendations = title.toUpperCase().includes('RECOMMENDATIONS');
+                                const icons = ['✦', '✷', '∞'];
 
-                                    const isRecommendations = title.toUpperCase().includes('RECOMMENDATIONS');
-                                    const icons = ['✦', '✷', '∞'];
+                                const renderText = (text) => {
+                                    if (!text) return '';
+                                    const parts = text.split(/(\*\*.*?\*\*)/g);
+                                    return parts.map((part, i) => {
+                                        if (part.startsWith('**') && part.endsWith('**')) {
+                                            return <strong key={i}>{part.slice(2, -2)}</strong>;
+                                        }
+                                        return part;
+                                    });
+                                };
 
-                                    const renderText = (text) => {
-                                        if (!text) return '';
-                                        const parts = text.split(/(\*\*.*?\*\*)/g);
-                                        return parts.map((part, i) => {
-                                            if (part.startsWith('**') && part.endsWith('**')) {
-                                                return <strong key={i}>{part.slice(2, -2)}</strong>;
-                                            }
-                                            return part;
-                                        });
-                                    };
-
-                                    if (isRecommendations) {
-                                        const recommendationLines = lines.slice(contentStartIdx);
-                                        return (
-                                            <div key={index} className="ai-result-card recommendations-card" style={{ gridColumn: '1 / -1' }}>
-                                                <span className="ai-card-icon">{icons[1]}</span>
-                                                <h4 className="ai-card-title">{title}</h4>
-                                                <div className="ai-results-subgrid">
-                                                    {recommendationLines.map((line, i) => {
-                                                        const trimmed = line.trim();
-                                                        if (!trimmed) return null;
-
-                                                        // Heading for category or ritual
-                                                        if (trimmed.startsWith('**') && trimmed.endsWith('**')) {
-                                                            return <h5 key={i} className="ai-item-category">{renderText(trimmed)}</h5>;
-                                                        }
-
-                                                        // List items
-                                                        if (trimmed.startsWith('-') || trimmed.startsWith('•')) {
-                                                            return (
-                                                                <div key={i} className="ai-list-item">
-                                                                    <span className="ai-bullet">✦</span>
-                                                                    <span>{renderText(trimmed.replace(/^[-•]\s*/, ''))}</span>
-                                                                </div>
-                                                            );
-                                                        }
-                                                        return <p key={i}>{renderText(trimmed)}</p>;
-                                                    })}
-                                                </div>
-                                            </div>
-                                        );
-                                    }
-
+                                if (isRecommendations) {
+                                    const recommendationLines = lines.slice(contentStartIdx);
                                     return (
-                                        <div key={index} className="ai-result-card">
-                                            <span className="ai-card-icon">{icons[index % 3]}</span>
+                                        <div key={index} className="ai-result-card recommendations-card" style={{ gridColumn: '1 / -1' }}>
+                                            <span className="ai-card-icon">{icons[1]}</span>
                                             <h4 className="ai-card-title">{title}</h4>
-                                            <div className="ai-card-body">
-                                                {lines.slice(contentStartIdx).map((line, i) => {
+                                            <div className="ai-results-subgrid">
+                                                {recommendationLines.map((line, i) => {
                                                     const trimmed = line.trim();
                                                     if (!trimmed) return null;
-                                                    if (trimmed.startsWith('•') || trimmed.startsWith('-')) {
+                                                    if (trimmed.startsWith('**') && trimmed.endsWith('**')) {
+                                                        return <h5 key={i} className="ai-item-category">{renderText(trimmed)}</h5>;
+                                                    }
+                                                    if (trimmed.startsWith('-') || trimmed.startsWith('•')) {
                                                         return (
                                                             <div key={i} className="ai-list-item">
-                                                                <span className="ai-bullet">›</span>
+                                                                <span className="ai-bullet">✦</span>
                                                                 <span>{renderText(trimmed.replace(/^[-•]\s*/, ''))}</span>
                                                             </div>
                                                         );
                                                     }
-                                                    return <p key={i} style={{ marginBottom: '12px' }}>{renderText(line)}</p>;
+                                                    return <p key={i}>{renderText(trimmed)}</p>;
                                                 })}
                                             </div>
                                         </div>
                                     );
-                                })}
-                            </div>
-                        </div>
+                                }
 
-                        <button className="reset-btn" onClick={resetQuiz}>Back to Style Hub</button>
-                    </>
-                )}
+                                return (
+                                    <div key={index} className="ai-result-card">
+                                        <span className="ai-card-icon">{icons[index % 3]}</span>
+                                        <h4 className="ai-card-title">{title}</h4>
+                                        <div className="ai-card-body">
+                                            {lines.slice(contentStartIdx).map((line, i) => {
+                                                const trimmed = line.trim();
+                                                if (!trimmed) return null;
+                                                if (trimmed.startsWith('•') || trimmed.startsWith('-')) {
+                                                    return (
+                                                        <div key={i} className="ai-list-item">
+                                                            <span className="ai-bullet">›</span>
+                                                            <span>{renderText(trimmed.replace(/^[-•]\s*/, ''))}</span>
+                                                        </div>
+                                                    );
+                                                }
+                                                return <p key={i} style={{ marginBottom: '12px' }}>{renderText(line)}</p>;
+                                            })}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+
+                            {loading && aiResult && (
+                                <div className="ai-typing-status" style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '20px' }}>
+                                    <div className="typing-indicator" style={{ justifyContent: 'center' }}>
+                                        <span></span><span></span><span></span>
+                                    </div>
+                                    <p style={{ fontSize: '0.8rem', color: '#D4AF37', marginTop: '8px', letterSpacing: '1px' }}>CURATING MORE INSIGHTS...</p>
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </div>
+
+                <div style={{ textAlign: 'center', marginTop: '40px' }}>
+                    <button className="reset-btn" onClick={resetQuiz}>Back to Style Hub</button>
+                </div>
             </div>
         );
     };
 
     return (
         <div className="style-hub-white">
-            {/* Header Section */}
             <section className="style-hub-hero">
                 <div className="style-hero-content">
                     <span className="ai-badge-style">

@@ -380,11 +380,60 @@
     background: #D4AF37;
 }
 
+/* TYPING INDICATOR */
+.typing-indicator {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    padding: 8px 0;
+}
+
+.typing-indicator span {
+    width: 6px;
+    height: 6px;
+    background-color: #D4AF37;
+    border-radius: 50%;
+    display: inline-block;
+    animation: typing-bounce 1.4s infinite ease-in-out both;
+}
+
+.typing-indicator span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes typing-bounce {
+
+    0%,
+    80%,
+    100% {
+        transform: scale(0);
+        opacity: 0.3;
+    }
+
+    40% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
 @media (max-width: 768px) {
     .chatgpt-sidebar {
         position: fixed;
         width: 80%;
         height: 100%;
         z-index: 1001;
+    }
+
+    .chatgpt-main {
+        width: 100%;
+    }
+
+    .message {
+        padding: 24px 16px;
+        gap: 12px;
     }
 }

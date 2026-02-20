@@ -99,7 +99,6 @@ router.post('/quiz-result', auth, async (req, res) => {
         }
 
         console.log(`DEBUG: Quiz request received: ${quizType}`);
-        console.log(`DEBUG: Answers:`, JSON.stringify(answers));
 
         // Define prompts for each quiz type with gender context
         const prompts = {
@@ -125,13 +124,16 @@ router.post('/quiz-result', auth, async (req, res) => {
         };
 
         const systemPrompt = prompts[quizType] || "You are a fashion and beauty expert.";
-
-        console.log(`DEBUG: Sending ${quizType} quiz request to Groq...`);
-
         const modelToUse = 'llama-3.3-70b-versatile';
 
-        // Call Groq API
-        const completion = await groq.chat.completions.create({
+        // Set headers for SSE
+        res.setHeader('Content-Type', 'text/event-stream');
+        res.setHeader('Cache-Control', 'no-cache');
+        res.setHeader('Connection', 'keep-alive');
+        res.setHeader('X-Accel-Buffering', 'no');
+
+        // Call Groq API with streaming
+        const stream = await groq.chat.completions.create({
             messages: [
                 {
                     role: 'system',
@@ -183,18 +185,25 @@ router.post('/quiz-result', auth, async (req, res) => {
             model: modelToUse,
             temperature: 0.6,
             max_tokens: 1500,
+            stream: true,
         });
 
-        const response = completion.choices[0].message.content;
-        console.log(`✅ ${quizType} quiz generated successfully using ${modelToUse}`);
-        res.json({ result: response });
+        let fullContent = '';
+        for await (const chunk of stream) {
+            const content = chunk.choices[0]?.delta?.content || '';
+            if (content) {
+                fullContent += content;
+                res.write(`data: ${JSON.stringify({ content })}\n\n`);
+            }
+        }
+
+        res.write(`data: ${JSON.stringify({ done: true })}\n\n`);
+        res.end();
 
     } catch (error) {
         console.error('❌ Error in quiz result:', error);
-        res.status(500).json({
-            error: `Atelier AI Error: ${error.message}`,
-            details: error.response?.data || "No additional details"
-        });
+        res.write(`data: ${JSON.stringify({ error: error.message })}\n\n`);
+        res.end();
     }
 });
 
