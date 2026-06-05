@@ -119,7 +119,7 @@ Follow these steps to demonstrate the application's full capabilities during eva
 
 ## 🔗 Live Deployment
 -   **Frontend:** `https://aisle-ai-4avu.vercel.app`
--   **Backend:** `https://aisle-ai-production.onrender.com`
+-   **Backend:** `https://aisleai-8.onrender.com`
 
 *Good luck with the presentation! The project is stable and feature-complete.*
 
