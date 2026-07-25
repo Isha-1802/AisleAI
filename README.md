@@ -23,9 +23,27 @@
 ![JWT](https://img.shields.io/badge/JWT_Auth-000000?style=flat-square&logo=jsonwebtokens&logoColor=white)
 ![Socket.io](https://img.shields.io/badge/Socket.io-010101?style=flat-square&logo=socketdotio&logoColor=white)
 
+<br/>
+
+### 🧭 Quick Links
+
+[![Overview](https://img.shields.io/badge/📖_Overview-1a1a1a?style=for-the-badge)](#-overview)
+[![Features](https://img.shields.io/badge/🌟_Features-1a1a1a?style=for-the-badge)](#-key-features)
+[![Tech](https://img.shields.io/badge/🏗️_Tech_Stack-1a1a1a?style=for-the-badge)](#-tech-stack--architecture)
+[![Setup](https://img.shields.io/badge/🚀_Setup-1a1a1a?style=for-the-badge)](#-getting-started)
+[![API](https://img.shields.io/badge/🔌_API-1a1a1a?style=for-the-badge)](#-api-reference)
+[![Demo](https://img.shields.io/badge/🎬_Demo-1a1a1a?style=for-the-badge)](#-demo-walkthrough)
+
 </div>
 
----
+<br/>
+
+<a id="overview"></a>
+<div align="center">
+
+![Overview](https://img.shields.io/badge/📖%20%20OVERVIEW-D4AF37?style=for-the-badge&labelColor=1a1a1a)
+
+</div>
 
 ## 📖 Overview
 
@@ -44,7 +62,14 @@ Built on the **MERN stack** and powered by **Groq's lightning-fast Llama 3 70B**
 
 </div>
 
----
+<br/>
+
+<a id="key-features"></a>
+<div align="center">
+
+![Features](https://img.shields.io/badge/🌟%20%20KEY%20FEATURES-FF3F6C?style=for-the-badge&labelColor=1a1a1a)
+
+</div>
 
 ## 🌟 Key Features
 
@@ -72,7 +97,14 @@ Built on the **MERN stack** and powered by **Groq's lightning-fast Llama 3 70B**
 - **Protected routes** guarded by Bearer-token middleware.
 - User profiles with saved preferences and favorites.
 
----
+<br/>
+
+<a id="tech-stack--architecture"></a>
+<div align="center">
+
+![Tech Stack](https://img.shields.io/badge/🏗️%20%20TECH%20STACK%20%26%20ARCHITECTURE-D4AF37?style=for-the-badge&labelColor=1a1a1a)
+
+</div>
 
 ## 🏗️ Tech Stack & Architecture
 
@@ -117,7 +149,14 @@ AisleAII/
 - **Glassmorphism** with `backdrop-filter: blur` on hero & footer for a premium feel.
 - **Component-scoped CSS** — each view owns its stylesheet for maintainability.
 
----
+<br/>
+
+<a id="getting-started"></a>
+<div align="center">
+
+![Getting Started](https://img.shields.io/badge/🚀%20%20GETTING%20STARTED-FF3F6C?style=for-the-badge&labelColor=1a1a1a)
+
+</div>
 
 ## 🚀 Getting Started
 
@@ -128,8 +167,8 @@ AisleAII/
 
 ### 1️⃣ Clone the repository
 ```bash
-git clone <your-repo-url>
-cd AisleAII
+git clone https://github.com/Isha-1802/AisleAI.git
+cd AisleAI
 ```
 
 ### 2️⃣ Configure the backend
@@ -161,11 +200,27 @@ npm run dev      # starts Vite dev server (http://localhost:5173)
 
 Open **http://localhost:5173** and start styling ✨
 
----
+<br/>
+
+<a id="screenshots"></a>
+<div align="center">
+
+![Screenshots](https://img.shields.io/badge/📸%20%20SCREENSHOTS-D4AF37?style=for-the-badge&labelColor=1a1a1a)
+
+</div>
 
 ## 📸 Screenshots
 
-> _Drop your images into a `docs/screenshots/` folder and update the paths below._
+<div align="center">
+
+> 🚧 **Screenshots coming soon.** Capture the four shots below, drop them into a `docs/screenshots/` folder, then uncomment the gallery to bring this section to life.
+
+**Shot list:** &nbsp; 🏠 `home.png` &nbsp;·&nbsp; ✨ `stylehub.png` &nbsp;·&nbsp; 💬 `stylist.png` &nbsp;·&nbsp; 🛍️ `collections.png`
+
+</div>
+
+<!--
+Once your images exist in docs/screenshots/, delete this comment wrapper to reveal the gallery:
 
 <div align="center">
 
@@ -175,17 +230,21 @@ Open **http://localhost:5173** and start styling ✨
 | **AI Stylist Chat** | **Collections & Filters** |
 | <img src="docs/screenshots/stylist.png" alt="AI Stylist chatbot" width="420"/> | <img src="docs/screenshots/collections.png" alt="Collections page" width="420"/> |
 
-</div>
-
-<div align="center">
-
-_Prefer motion? Record a short walkthrough and embed it here:_
+_Prefer motion? Record a short walkthrough:_
 
 <img src="docs/screenshots/demo.gif" alt="AisleAI demo" width="720"/>
 
 </div>
+-->
 
----
+<br/>
+
+<a id="demo-walkthrough"></a>
+<div align="center">
+
+![Demo Walkthrough](https://img.shields.io/badge/🎬%20%20DEMO%20WALKTHROUGH-FF3F6C?style=for-the-badge&labelColor=1a1a1a)
+
+</div>
 
 ## 🎬 Demo Walkthrough
 
@@ -217,7 +276,14 @@ A guided tour of the flagship flows — perfect for a live demo or evaluation.
 2. Ask something like _"What should I wear to a summer wedding?"_
 3. Watch the **Llama 3** response stream in — your conversation is saved for later.
 
----
+<br/>
+
+<a id="api-reference"></a>
+<div align="center">
+
+![API Reference](https://img.shields.io/badge/🔌%20%20API%20REFERENCE-D4AF37?style=for-the-badge&labelColor=1a1a1a)
+
+</div>
 
 ## 🔌 API Reference
 
@@ -275,7 +341,14 @@ Base URL: `http://localhost:5001/api` · 🔒 = requires `Authorization: Bearer 
 | `PUT` | `/:reviewId` 🔒 | Update a review |
 | `DELETE` | `/:reviewId` 🔒 | Delete a review |
 
----
+<br/>
+
+<a id="ai-integration"></a>
+<div align="center">
+
+![AI Integration](https://img.shields.io/badge/🧠%20%20AI%20INTEGRATION-FF3F6C?style=for-the-badge&labelColor=1a1a1a)
+
+</div>
 
 ## 🧠 AI Integration
 
@@ -285,7 +358,14 @@ AisleAI uses **Groq's Llama 3 70B** for its exceptional speed and reasoning:
 - **Streaming** — responses stream token-by-token for a responsive chat and quiz experience.
 - **Grounded Output** — recommendations are formatted strictly to render cleanly within the app's components.
 
----
+<br/>
+
+<a id="security"></a>
+<div align="center">
+
+![Security](https://img.shields.io/badge/🔒%20%20SECURITY%20HIGHLIGHTS-D4AF37?style=for-the-badge&labelColor=1a1a1a)
+
+</div>
 
 ## 🔒 Security Highlights
 
@@ -293,7 +373,14 @@ AisleAI uses **Groq's Llama 3 70B** for its exceptional speed and reasoning:
 - 🛡️ **JWT middleware** protects private routes; every sensitive request requires a valid Bearer token.
 - 🤫 **Environment variables** keep the MongoDB URI, JWT secret, and Groq key out of source control.
 
----
+<br/>
+
+<a id="roadmap"></a>
+<div align="center">
+
+![Roadmap](https://img.shields.io/badge/🗺️%20%20ROADMAP-FF3F6C?style=for-the-badge&labelColor=1a1a1a)
+
+</div>
 
 ## 🗺️ Roadmap
 
@@ -302,7 +389,14 @@ AisleAI uses **Groq's Llama 3 70B** for its exceptional speed and reasoning:
 - [ ] **Image-based styling** — upload a photo for outfit matching (Multer already wired).
 - [ ] **Social sharing** of AI-generated looks.
 
----
+<br/>
+
+<a id="contributing"></a>
+<div align="center">
+
+![Contributing](https://img.shields.io/badge/🤝%20%20CONTRIBUTING-D4AF37?style=for-the-badge&labelColor=1a1a1a)
+
+</div>
 
 ## 🤝 Contributing
 
@@ -317,7 +411,14 @@ git commit -m "feat: add amazing feature"
 git push origin feature/amazing-feature
 ```
 
----
+<br/>
+
+<a id="license"></a>
+<div align="center">
+
+![License](https://img.shields.io/badge/📄%20%20LICENSE-FF3F6C?style=for-the-badge&labelColor=1a1a1a)
+
+</div>
 
 ## 📄 License
 
