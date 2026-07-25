@@ -1,14 +1,9 @@
-const Groq = require('groq-sdk');
+const { createCompletion } = require('../utils/groqClient');
 const Conversation = require('../models/Conversation');
 const Product = require('../models/Product');
 const User = require('../models/User');
 
-// Initialize Groq directly
-const groq = new Groq({
-    apiKey: process.env.GROQ_API_KEY
-});
-
-console.log('🔧 Groq initialized in chatController.js');
+console.log('🔧 Groq client loaded in chatController.js');
 console.log('API Key present:', !!process.env.GROQ_API_KEY);
 
 // Get all conversations for a user
@@ -111,7 +106,7 @@ exports.chat = async (req, res) => {
         try {
             console.log(`🚀 DEBUG: Starting real-time stream for user message: "${message}"`);
 
-            if (!groq || !process.env.GROQ_API_KEY) {
+            if (!process.env.GROQ_API_KEY) {
                 console.error('❌ GROQ_API_KEY is missing from environment variables');
                 throw new Error('Groq API key not configured');
             }
@@ -127,7 +122,7 @@ exports.chat = async (req, res) => {
             res.setHeader('Connection', 'keep-alive');
             res.setHeader('X-Accel-Buffering', 'no'); // Disable proxy buffering for real-time
 
-            const stream = await groq.chat.completions.create({
+            const stream = await createCompletion({
                 messages: [
                     {
                         role: 'system',

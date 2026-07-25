@@ -58,3 +58,24 @@ const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
+
+// ---------------------------------------------------------------------------
+// Keep-alive: prevent Render free-tier cold starts.
+// Render spins the instance down after ~15 min of no inbound traffic, which
+// makes the first AI request afterwards hang or fail. Pinging our own /api/health
+// every ~13 min keeps the instance warm so Groq/AI works around the clock.
+// Render provides RENDER_EXTERNAL_URL automatically; SELF_URL is a manual override.
+// ---------------------------------------------------------------------------
+const SELF_URL = process.env.RENDER_EXTERNAL_URL || process.env.SELF_URL;
+if (SELF_URL && process.env.NODE_ENV !== 'test') {
+  const KEEP_ALIVE_MS = 13 * 60 * 1000; // 13 minutes (under Render's 15-min idle window)
+  setInterval(async () => {
+    try {
+      const response = await fetch(`${SELF_URL.replace(/\/$/, '')}/api/health`);
+      console.log(`💓 Keep-alive ping → ${response.status}`);
+    } catch (err) {
+      console.warn('⚠️ Keep-alive ping failed:', err.message);
+    }
+  }, KEEP_ALIVE_MS);
+  console.log(`💓 Keep-alive enabled for ${SELF_URL}`);
+}

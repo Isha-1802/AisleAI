@@ -1,14 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const Groq = require('groq-sdk');
+const { createCompletion } = require('../utils/groqClient');
 const auth = require('../middleware/auth');
 
-// Initialize Groq directly
-const groq = new Groq({
-    apiKey: process.env.GROQ_API_KEY
-});
-
-console.log('🔧 Groq initialized in styleHub.js');
+console.log('🔧 Groq client loaded in styleHub.js');
 console.log('API Key present:', !!process.env.GROQ_API_KEY);
 
 // Color analysis
@@ -16,14 +11,14 @@ router.post('/color-analysis', auth, async (req, res) => {
     try {
         const { skinTone, preferences } = req.body;
 
-        if (!groq || !process.env.GROQ_API_KEY) {
+        if (!process.env.GROQ_API_KEY) {
             return res.json({
                 colors: ['Deep Purple', 'Emerald Green', 'Royal Blue', 'Burgundy'],
                 message: 'Based on your preferences!',
             });
         }
 
-        const completion = await groq.chat.completions.create({
+        const completion = await createCompletion({
             messages: [
                 {
                     role: 'system',
@@ -52,7 +47,7 @@ router.post('/style-recommendations', auth, async (req, res) => {
     try {
         const { occasion, preferences } = req.body;
 
-        if (!groq || !process.env.GROQ_API_KEY) {
+        if (!process.env.GROQ_API_KEY) {
             return res.json({
                 recommendations: [
                     'Try a silk saree for a classic look',
@@ -62,7 +57,7 @@ router.post('/style-recommendations', auth, async (req, res) => {
             });
         }
 
-        const completion = await groq.chat.completions.create({
+        const completion = await createCompletion({
             messages: [
                 {
                     role: 'system',
@@ -93,7 +88,7 @@ router.post('/quiz-result', auth, async (req, res) => {
         const User = require('../models/User'); // Import User for auto-save
 
         // Check if API key exists
-        if (!groq || !process.env.GROQ_API_KEY) {
+        if (!process.env.GROQ_API_KEY) {
             return res.json({
                 result: "API Key missing. Please check backend configuration."
             });
@@ -119,7 +114,7 @@ router.post('/quiz-result', auth, async (req, res) => {
         res.setHeader('X-Accel-Buffering', 'no');
 
         // Call Groq API with streaming
-        const stream = await groq.chat.completions.create({
+        const stream = await createCompletion({
             messages: [
                 {
                     role: 'system',
