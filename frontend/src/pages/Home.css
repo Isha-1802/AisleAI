@@ -913,3 +913,66 @@
         font-size: 10px;
     }
 }
+/* ===== Animated Stats Band ===== */
+.stats-band {
+    background: #0e0e0e;
+    padding: 70px 0;
+    border-top: 1px solid rgba(212, 175, 55, 0.25);
+    border-bottom: 1px solid rgba(212, 175, 55, 0.25);
+}
+
+.stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    text-align: center;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+}
+
+.stat-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: -12px;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 46px;
+    width: 1px;
+    background: rgba(212, 175, 55, 0.3);
+}
+
+.stat-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.4rem;
+    line-height: 1;
+    font-weight: 500;
+    color: #D4AF37;
+    letter-spacing: 1px;
+}
+
+.stat-label {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+@media (max-width: 768px) {
+    .stats-row {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+    .stat-item:not(:last-child)::after {
+        display: none;
+    }
+    .stat-number {
+        font-size: 2.8rem;
+    }
+}

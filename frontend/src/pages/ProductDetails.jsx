@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import { useCart } from '../context/CartContext';
@@ -111,7 +112,7 @@ function ProductDetails() {
                         <button
                             onClick={() => {
                                 addToCart(product);
-                                alert('Product added to bag successfully!');
+                                toast.success('Added to bag ✦');
                             }}
                             style={{
                                 flex: 1,

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { megaMenuData } from '../data/megaMenuData';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
@@ -13,7 +13,16 @@ function Header() {
     const [showUserMenu, setShowUserMenu] = useState(false);
     const [showMegaMenu, setShowMegaMenu] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
     const timeoutRef = useRef(null);
+
+    // Frost the navbar once the user scrolls past the top.
+    useEffect(() => {
+        const onScroll = () => setScrolled(window.scrollY > 40);
+        onScroll();
+        window.addEventListener('scroll', onScroll, { passive: true });
+        return () => window.removeEventListener('scroll', onScroll);
+    }, []);
 
     const handleLogoClick = (e) => {
         if (window.innerWidth <= 768) {
@@ -34,7 +43,7 @@ function Header() {
     };
 
     return (
-        <header className="header-luxury">
+        <header className={`header-luxury ${scrolled ? 'scrolled' : ''}`}>
             <div className="header-container-luxury">
                 {/* Luxury Logo */}
                 <Link to="/" className="logo-luxury" onClick={handleLogoClick}>

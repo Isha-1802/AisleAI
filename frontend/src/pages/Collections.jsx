@@ -391,8 +391,10 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import axios from 'axios';
+import toast from 'react-hot-toast';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
+import { ProductGridSkeleton } from '../components/Skeleton';
 import './Collections.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
@@ -699,7 +701,9 @@ function Collections() {
 
                 {/* Products Grid */}
                 <div className="products-section">
-                    {products.length === 0 && !loading ? (
+                    {loading && products.length === 0 ? (
+                        <ProductGridSkeleton count={9} />
+                    ) : products.length === 0 && !loading ? (
                         <div className="empty">
                             <p>No products found</p>
                             <button
@@ -804,7 +808,7 @@ function ProductCard({ product }) {
                             e.preventDefault();
                             e.stopPropagation();
                             addToCart(product);
-                            alert('Added to Bag');
+                            toast.success('Added to Bag');
                         }}
                     >
                         🛍️ ADD TO BAG

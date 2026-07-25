@@ -1,4 +1,5 @@
 import React from 'react';
+import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 import { useWishlist } from '../context/WishlistContext';
 import { useCart } from '../context/CartContext';
@@ -81,7 +82,7 @@ function Wishlist() {
                                     e.stopPropagation();
                                     addToCart(product);
                                     removeFromWishlist(product._id);
-                                    alert('Moved to Bag');
+                                    toast.success('Moved to Bag');
                                 }}
                                 style={{
                                     width: '100%', padding: '12px', background: '#1A1A1A', color: 'white',

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import axios from 'axios';
 import './ReviewSection.css';
 
@@ -41,7 +42,7 @@ function ReviewSection({ productId }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!user) {
-            alert('Please login to write a review');
+            toast.error('Please login to write a review');
             return;
         }
 
@@ -67,7 +68,7 @@ function ReviewSection({ productId }) {
         } catch (err) {
             console.error('Submit review error:', err);
             const errMsg = err.response?.data?.error || err.message || 'Failed to submit review';
-            alert(`Error (${err.response?.status}): ${errMsg}`);
+            toast.error(errMsg || 'Something went wrong');
         } finally {
             setSubmitting(false);
         }
@@ -91,7 +92,7 @@ function ReviewSection({ productId }) {
             });
             setReviews(reviews.filter(r => r._id !== reviewId));
         } catch (err) {
-            alert('Failed to delete review');
+            toast.error('Failed to delete review');
         }
     };
 

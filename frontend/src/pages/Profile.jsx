@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
@@ -46,11 +47,11 @@ function Profile() {
                 await axios.delete(`${API_URL}/user/profile`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                alert('Account deleted successfully.');
+                toast.success('Account deleted successfully.');
                 onLogout(); // This will clear frontend state and redirect
             } catch (error) {
                 console.error('Failed to delete account:', error);
-                alert('Failed to delete account. Please try again.');
+                toast.error('Failed to delete account. Please try again.');
             }
         }
     };
