@@ -267,17 +267,20 @@ function AIStylist() {
                 <div className="chat-messages">
                     {messages.length === 0 ? (
                         <div className="empty-state">
-                            <h1>AisleAI Stylist</h1>
-                            <p>Your personal fashion assistant</p>
+                            <h1>AisleAI</h1>
+                            <p>Ask me anything — from everyday questions to styling advice</p>
                             <div className="suggestions">
+                                <button onClick={() => setInput('Explain how machine learning works in simple terms')}>
+                                    Explain how machine learning works
+                                </button>
+                                <button onClick={() => setInput('Write a short poem about the ocean')}>
+                                    Write a short poem about the ocean
+                                </button>
+                                <button onClick={() => setInput('Give me a 3-day beginner workout plan')}>
+                                    Give me a 3-day beginner workout plan
+                                </button>
                                 <button onClick={() => setInput('What should I wear to a wedding?')}>
                                     What should I wear to a wedding?
-                                </button>
-                                <button onClick={() => setInput('Help me find the perfect outfit for work')}>
-                                    Help me find the perfect outfit for work
-                                </button>
-                                <button onClick={() => setInput('What colors suit me best?')}>
-                                    What colors suit me best?
                                 </button>
                             </div>
                         </div>
@@ -350,7 +353,7 @@ function AIStylist() {
                                     sendMessage(e);
                                 }
                             }}
-                            placeholder="Message AisleAI Stylist..."
+                            placeholder="Message AisleAI..."
                             rows={1}
                             disabled={loading}
                         />
