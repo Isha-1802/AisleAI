@@ -10,39 +10,34 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const loadUser = async () => {
-            const token = localStorage.getItem('token');
+        const token = localStorage.getItem('token');
 
-            if (!token) {
-                setLoading(false);
-                return;
+        // 1) Restore the cached user synchronously and render the app IMMEDIATELY.
+        //    No blocking loader on every visit.
+        try {
+            const userData = localStorage.getItem('user');
+            if (token && userData && userData !== 'undefined') {
+                setUser(JSON.parse(userData));
             }
+        } catch {
+            localStorage.removeItem('user');
+        }
+        setLoading(false);
 
-            // 1) Optimistically restore the cached user so the UI shows as
-            //    logged in instantly (no flicker) while we verify in the background.
-            try {
-                const userData = localStorage.getItem('user');
-                if (userData && userData !== 'undefined') {
-                    setUser(JSON.parse(userData));
-                }
-            } catch {
-                localStorage.removeItem('user');
-            }
+        // 2) Verify the token with the backend in the BACKGROUND (doesn't block
+        //    rendering). This keeps the session honest without a loader flash.
+        if (!token) return;
 
-            // 2) Verify the token with the backend and refresh the user record.
-            //    This confirms the session is genuinely valid so protected calls
-            //    (like the AI chat) work immediately on page load.
-            try {
-                const res = await axios.get(`${API_URL}/auth/me`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
+        axios
+            .get(`${API_URL}/auth/me`, { headers: { Authorization: `Bearer ${token}` } })
+            .then((res) => {
                 const freshUser = res.data.user || res.data;
                 setUser(freshUser);
                 localStorage.setItem('user', JSON.stringify(freshUser));
-            } catch (error) {
-                // ONLY log out on a genuine auth rejection (401/403). Network
-                // errors or a 503 (server/DB still warming up) must NOT clear the
-                // session, or the user gets wrongly kicked out on a cold start.
+            })
+            .catch((error) => {
+                // ONLY log out on a genuine auth rejection (401/403). Network errors
+                // or a 503 (server warming up) must NOT clear a valid session.
                 if (error.response && (error.response.status === 401 || error.response.status === 403)) {
                     localStorage.removeItem('token');
                     localStorage.removeItem('user');
@@ -50,12 +45,7 @@ export const AuthProvider = ({ children }) => {
                 } else {
                     console.warn('Session check deferred (server not reachable):', error.message);
                 }
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        loadUser();
+            });
     }, []);
 
     const login = (userData, token) => {

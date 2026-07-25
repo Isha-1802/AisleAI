@@ -108,10 +108,11 @@ function Home() {
                         <p className="section-subtitle-dark">Discover our curated selection of luxury fashion</p>
                     </Reveal>
 
-                    <div className="collections-grid-white">
-                        {collections.map((collection, index) => (
-                            <Reveal key={collection.name} delay={(index % 5) * 0.06}>
+                    <Reveal>
+                        <div className="collections-grid-white">
+                            {collections.map((collection) => (
                                 <Link
+                                    key={collection.name}
                                     to={`/collections?category=${collection.name}`}
                                     className="collection-card-white"
                                 >
@@ -122,9 +123,9 @@ function Home() {
                                         </div>
                                     </Tilt>
                                 </Link>
-                            </Reveal>
-                        ))}
-                    </div>
+                            ))}
+                        </div>
+                    </Reveal>
                 </div>
             </section>
 
@@ -167,10 +168,11 @@ function Home() {
                         <p className="section-subtitle-dark">Perfect outfits for every moment</p>
                     </Reveal>
 
-                    <div className="occasions-grid-white">
-                        {occasions.map((occasion, index) => (
-                            <Reveal key={occasion.name} delay={(index % 4) * 0.06}>
+                    <Reveal>
+                        <div className="occasions-grid-white">
+                            {occasions.map((occasion) => (
                                 <Link
+                                    key={occasion.name}
                                     to={`/collections?occasion=${occasion.search}`}
                                     className="occasion-card-white"
                                 >
@@ -181,9 +183,9 @@ function Home() {
                                         </div>
                                     </Tilt>
                                 </Link>
-                            </Reveal>
-                        ))}
-                    </div>
+                            ))}
+                        </div>
+                    </Reveal>
                 </div>
             </section>
 
@@ -195,18 +197,19 @@ function Home() {
                         <p className="section-subtitle-dark">The world's most prestigious fashion houses</p>
                     </Reveal>
 
-                    <div className="brands-grid">
-                        {brands.slice(0, 12).map((brand, index) => (
-                            <Reveal key={index} delay={(index % 6) * 0.05}>
+                    <Reveal>
+                        <div className="brands-grid">
+                            {brands.slice(0, 12).map((brand, index) => (
                                 <Link
+                                    key={index}
                                     to={`/collections?brand=${brand}`}
                                     className="brand-item"
                                 >
                                     {brand}
                                 </Link>
-                            </Reveal>
-                        ))}
-                    </div>
+                            ))}
+                        </div>
+                    </Reveal>
                 </div>
             </section>
 
@@ -245,21 +248,21 @@ function Home() {
                         <p className="section-subtitle-dark">Our commitment to excellence and sustainability</p>
                     </Reveal>
 
-                    <div className="philosophy-grid">
-                        {[
-                            { icon: '✦', title: 'Artisan Craftsmanship', text: 'Every piece is selected for its exceptional quality and attention to detail, honoring traditional techniques.' },
-                            { icon: '∞', title: 'Timeless Design', text: 'We believe in style that transcends seasons, offering wardrobe staples that last a lifetime.' },
-                            { icon: '🌿', title: 'Sustainable Future', text: 'Committed to reducing our environmental footprint through conscious sourcing and ethical practices.' },
-                        ].map((item, index) => (
-                            <Reveal key={item.title} delay={index * 0.12}>
-                                <div className="philosophy-card">
+                    <Reveal>
+                        <div className="philosophy-grid">
+                            {[
+                                { icon: '✦', title: 'Artisan Craftsmanship', text: 'Every piece is selected for its exceptional quality and attention to detail, honoring traditional techniques.' },
+                                { icon: '∞', title: 'Timeless Design', text: 'We believe in style that transcends seasons, offering wardrobe staples that last a lifetime.' },
+                                { icon: '🌿', title: 'Sustainable Future', text: 'Committed to reducing our environmental footprint through conscious sourcing and ethical practices.' },
+                            ].map((item) => (
+                                <div className="philosophy-card" key={item.title}>
                                     <span className="philosophy-icon">{item.icon}</span>
                                     <h3 className="philosophy-title">{item.title}</h3>
                                     <p className="philosophy-text">{item.text}</p>
                                 </div>
-                            </Reveal>
-                        ))}
-                    </div>
+                            ))}
+                        </div>
+                    </Reveal>
                 </div>
             </section>
 
