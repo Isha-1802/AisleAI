@@ -1,0 +1,29 @@
+name: Keep Backend Awake
+
+# Pings the AisleAI backend health endpoint on a schedule so Render's free tier
+# doesn't spin the service down. This runs from GitHub's servers (external), so
+# it also wakes the instance after a full spin-down — covering the gap the
+# in-app self-ping cannot.
+#
+# Notes:
+# - GitHub cron is best-effort; runs may be delayed a few minutes under load.
+# - Scheduled workflows auto-disable after 60 days of repo inactivity — just
+#   push a commit or re-enable in the Actions tab to resume.
+
+on:
+  schedule:
+    - cron: "*/10 * * * *" # every 10 minutes
+  workflow_dispatch: {} # allow manual runs from the Actions tab
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping /api/health
+        run: |
+          echo "Pinging AisleAI backend…"
+          code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 60 https://aisleai-8.onrender.com/api/health)
+          echo "Health check returned HTTP $code"
+          if [ "$code" != "200" ]; then
+            echo "::warning::Backend responded with $code (may still be waking up)."
+          fi

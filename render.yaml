@@ -1,0 +1,26 @@
+# Render blueprint for the AisleAI backend.
+# In the Render dashboard: New > Blueprint, point at this repo, then fill in
+# the env vars marked sync:false (secrets) in the UI.
+#
+# Render sets RENDER_EXTERNAL_URL automatically, which the server uses for its
+# self-ping keep-alive (see backend/src/server.js) to reduce free-tier sleeping.
+services:
+  - type: web
+    name: aisleai-backend
+    runtime: node
+    rootDir: backend
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: GROQ_MODEL
+        value: llama-3.3-70b-versatile
+      - key: GROQ_FALLBACK_MODEL
+        value: llama-3.1-8b-instant
