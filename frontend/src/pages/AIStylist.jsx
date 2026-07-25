@@ -7,7 +7,7 @@ import './AIStylist.css';
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
 function AIStylist() {
-    const { user, loading: authLoading } = useAuth();
+    const { user, loading: authLoading, logout } = useAuth();
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
@@ -90,7 +90,7 @@ function AIStylist() {
             // Add an empty assistant message to populate during stream
             setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
 
-            const response = await fetch(`${API_URL}/chat/message`, {
+            const requestOptions = {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -100,7 +100,20 @@ function AIStylist() {
                     message: userMessage,
                     conversationId: activeConversation
                 })
-            });
+            };
+
+            let response = await fetch(`${API_URL}/chat/message`, requestOptions);
+
+            // Server warming up (cold start / DB not ready) — retry once.
+            if (response.status === 503) {
+                await new Promise(r => setTimeout(r, 1500));
+                response = await fetch(`${API_URL}/chat/message`, requestOptions);
+            }
+
+            // Genuine auth failure — session really expired, send them to login.
+            if (response.status === 401) {
+                throw new Error('SESSION_EXPIRED');
+            }
 
             if (!response.ok) throw new Error('Failed to connect to AI');
 
@@ -150,7 +163,17 @@ function AIStylist() {
             }
         } catch (error) {
             console.error('❌ Failed to send message:', error);
-            const errorMessage = error.message || 'Sorry, I couldn\'t process your request. Please try again.';
+
+            // A truly expired/invalid session: clear it and redirect to login.
+            if (error.message === 'SESSION_EXPIRED') {
+                logout();
+                navigate('/login');
+                return;
+            }
+
+            const errorMessage = error.message === 'Failed to fetch'
+                ? 'The server is waking up — please try again in a few seconds.'
+                : (error.message || 'Sorry, I couldn\'t process your request. Please try again.');
 
             setMessages(prev => {
                 const newMessages = [...prev];
