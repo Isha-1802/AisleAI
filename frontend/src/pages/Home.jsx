@@ -4,15 +4,8 @@ import Tilt from 'react-parallax-tilt';
 import toast from 'react-hot-toast';
 import { collections, offers, occasions, brands, testimonials } from '../data/homeData';
 import Reveal from '../components/Reveal';
-import Counter from '../components/Counter';
 
 import './Home.css';
-
-const heroStats = [
-    { end: 1000, suffix: '+', label: 'Curated Pieces' },
-    { end: 50, suffix: '+', label: 'Luxury Brands' },
-    { static: '24/7', label: 'Personal Styling' },
-];
 
 const tiltProps = {
     tiltMaxAngleX: 7,
@@ -80,24 +73,6 @@ function Home() {
                         </Link>
                     </div>
                 </motion.div>
-            </section>
-
-            {/* Animated Stats Band */}
-            <section className="stats-band">
-                <div className="container-white">
-                    <div className="stats-row">
-                        {heroStats.map((stat, index) => (
-                            <Reveal key={stat.label} delay={index * 0.12} className="stat-item">
-                                <span className="stat-number">
-                                    {stat.static
-                                        ? stat.static
-                                        : <Counter end={stat.end} suffix={stat.suffix} />}
-                                </span>
-                                <span className="stat-label">{stat.label}</span>
-                            </Reveal>
-                        ))}
-                    </div>
-                </div>
             </section>
 
             {/* Collections Section - WHITE BG */}
